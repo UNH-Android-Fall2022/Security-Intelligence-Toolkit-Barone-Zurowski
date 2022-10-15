@@ -6,6 +6,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : AppCompatActivity() {
@@ -13,11 +15,23 @@ class MainActivity : AppCompatActivity() {
     private var TAG = "_MainActivity"
     private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var topNavigationView : MaterialToolbar
+    private var database: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // will want to do it first for login layout but for testing purposes.
+        val collection = database.collection("test")
+
+        collection.get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
         setContentView(R.layout.app_layout)
 
 
