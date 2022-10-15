@@ -4,25 +4,35 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView
-import com.toolkit.sit.databinding.ActivityMainBinding
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : AppCompatActivity() {
 
-    private var TAG = "SIT_TAG_MAIN"
-    private lateinit var binding: ActivityMainBinding
+    private var TAG = "_MainActivity"
     private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var topNavigationView : MaterialToolbar
+    private var database: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        val collection = database.collection("test")
+
+        collection.get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
+        setContentView(R.layout.app_layout)
 
 
         topNavigationView = findViewById(R.id.topAppBar)
@@ -50,9 +60,8 @@ class MainActivity : AppCompatActivity() {
 
             if(menuItem.itemId == R.id.SettingsFragment) {
                 Log.d(TAG, "Settings")
-                true
             }
-            false
+            true
         }
     }
 }
