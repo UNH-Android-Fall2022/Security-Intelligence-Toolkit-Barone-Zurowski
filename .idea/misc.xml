@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/home.xml" value="0.3355" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3355" />
+        <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.3355" />
         <entry key="app/src/main/res/drawable/search.xml" value="0.3355" />
         <entry key="app/src/main/res/drawable/settings.xml" value="0.3355" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3111413043478261" />
@@ -14,6 +15,7 @@
         <entry key="app/src/main/res/menu/bottom_nav.xml" value="0.4505208333333333" />
         <entry key="app/src/main/res/menu/bottom_navigation.xml" value="0.4505208333333333" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.45260416666666664" />
+        <entry key="app/src/main/res/mipmap/ic_launcher.xml" value="0.3355" />
       </map>
     </option>
   </component>
