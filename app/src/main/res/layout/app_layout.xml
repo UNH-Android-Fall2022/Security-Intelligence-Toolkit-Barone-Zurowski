@@ -36,13 +36,14 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
-        android:name="com.toolkit.sit.HomeFragment"
-        android:layout_width="407dp"
-        android:layout_height="618dp"
-        app:layout_constraintBottom_toBottomOf="@+id/bottom_nav"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:name="com.toolkit.sit.fragments.HomeFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
+        app:layout_constraintEnd_toEndOf="@+id/bottom_nav"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/appBarLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        tools:layout="@layout/fragment_home" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
