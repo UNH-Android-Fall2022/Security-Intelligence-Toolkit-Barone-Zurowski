@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         topNavigationView = findViewById(R.id.topAppBar)
         bottomNavigationView = findViewById(R.id.bottom_nav)
 
-        bottomNavigationView.setOnItemSelectedListener {menuItem : MenuItem ->
+        bottomNavigationView.setOnItemSelectedListener { menuItem : MenuItem ->
             when(menuItem.itemId) {
                 R.id.HomeFragment -> {
                     Log.d(TAG, "Home")
