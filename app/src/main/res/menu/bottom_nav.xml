@@ -20,9 +20,5 @@
         android:title="History"
         android:icon="@drawable/history"/>
 
-    <item
-        android:id="@+id/SettingsFragment"
-        android:title="Setting"
-        android:icon="@drawable/settings"/>
 
 </menu>
