@@ -7,7 +7,7 @@
         android:title="Home"
         android:icon="@drawable/home"/>
     <item
-        android:id="@+id/ProfileFragment"
+        android:id="@+id/ScanFragment"
         android:title="Scan"
         android:icon="@drawable/search"/>
     <item
@@ -20,9 +20,5 @@
         android:title="History"
         android:icon="@drawable/history"/>
 
-    <item
-        android:id="@+id/SettingsFragment"
-        android:title="Setting"
-        android:icon="@drawable/settings"/>
 
 </menu>
