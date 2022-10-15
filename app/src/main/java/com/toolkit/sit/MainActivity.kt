@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.*
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.toolkit.sit.fragments.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,30 +39,47 @@ class MainActivity : AppCompatActivity() {
         topNavigationView = findViewById(R.id.topAppBar)
         bottomNavigationView = findViewById(R.id.bottom_nav)
 
-        bottomNavigationView.setOnItemReselectedListener {menuItem : MenuItem ->
+        bottomNavigationView.setOnItemSelectedListener {menuItem : MenuItem ->
             when(menuItem.itemId) {
                 R.id.HomeFragment -> {
                     Log.d(TAG, "Home")
+                    setFragment(HomeFragment())
                 }
                 R.id.ScanFragment -> {
                     Log.d(TAG, "Scan")
+                    setFragment(ScanFragment())
+
                 }
                 R.id.ShodanFragment -> {
                     Log.d(TAG, "Shodan")
+                    setFragment(ShodanFragment())
                 }
                 R.id.HistoryFragment -> {
                     Log.d(TAG, "History")
+                    setFragment(HistoryFragment())
                 }
-
             }
+            true
         }
 
         topNavigationView.setOnMenuItemClickListener { menuItem: MenuItem ->
 
             if(menuItem.itemId == R.id.SettingsFragment) {
                 Log.d(TAG, "Settings")
+                setFragment(SettingsFragment())
             }
             true
         }
+
+
+
+    }
+
+    private fun setFragment(fragment: Fragment) {
+        // Create new fragment and transaction
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_view, fragment).commit()
+
     }
 }
