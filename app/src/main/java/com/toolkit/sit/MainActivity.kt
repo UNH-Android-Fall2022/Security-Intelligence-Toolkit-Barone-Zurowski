@@ -15,11 +15,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         button = findViewById(R.id.button)
+
+
+        button.setOnClickListener {
+            changeView()
+        }
     //        setContentView(R.layout.)
     }
 
-    fun changeView(view: View?) {
-        val intent = Intent(this@MainActivity, SITActivity::class.java)
+    fun changeView() {
+        val intent = Intent(this, SITActivity::class.java)
         startActivity(intent)
     }
 }
