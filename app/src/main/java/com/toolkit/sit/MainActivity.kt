@@ -1,85 +1,25 @@
 package com.toolkit.sit
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.*
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.firestore.FirebaseFirestore
-import com.toolkit.sit.fragments.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private var TAG = "_MainActivity"
-    private lateinit var bottomNavigationView : BottomNavigationView
-    private lateinit var topNavigationView : MaterialToolbar
-    private var database: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private lateinit var button : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val collection = database.collection("test")
-
-        collection.get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    Log.d(TAG, "${document.id} => ${document.data}")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
-            }
-
-        setContentView(R.layout.app_layout)
-
-
-        topNavigationView = findViewById(R.id.topAppBar)
-        bottomNavigationView = findViewById(R.id.bottom_nav)
-
-        bottomNavigationView.setOnItemSelectedListener {menuItem : MenuItem ->
-            when(menuItem.itemId) {
-                R.id.HomeFragment -> {
-                    Log.d(TAG, "Home")
-                    setFragment(HomeFragment())
-                }
-                R.id.ScanFragment -> {
-                    Log.d(TAG, "Scan")
-                    setFragment(ScanFragment())
-
-                }
-                R.id.ShodanFragment -> {
-                    Log.d(TAG, "Shodan")
-                    setFragment(ShodanFragment())
-                }
-                R.id.HistoryFragment -> {
-                    Log.d(TAG, "History")
-                    setFragment(HistoryFragment())
-                }
-            }
-            true
-        }
-
-        topNavigationView.setOnMenuItemClickListener { menuItem: MenuItem ->
-
-            if(menuItem.itemId == R.id.SettingsFragment) {
-                Log.d(TAG, "Settings")
-                setFragment(SettingsFragment())
-            }
-            true
-        }
-
-
-
+        setContentView(R.layout.activity_main)
+        button = findViewById(R.id.button)
+    //        setContentView(R.layout.)
     }
 
-    private fun setFragment(fragment: Fragment) {
-        // Create new fragment and transaction
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_view, fragment).commit()
-
+    fun changeView(view: View?) {
+        val intent = Intent(this@MainActivity, SITActivity::class.java)
+        startActivity(intent)
     }
 }
