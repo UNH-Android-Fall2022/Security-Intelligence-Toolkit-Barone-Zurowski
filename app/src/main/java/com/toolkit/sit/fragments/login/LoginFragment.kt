@@ -1,22 +1,25 @@
 package com.toolkit.sit.fragments.login
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
+import com.toolkit.sit.SITActivity
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+
 
 /**
  * A simple [Fragment] subclass.
@@ -26,7 +29,7 @@ private const val ARG_PARAM2 = "param2"
 class LoginFragment : Fragment() {
     // https://stackoverflow.com/questions/13216916/how-to-replace-the-activitys-fragment-from-the-fragment-itself
     private var TAG = "LOGIN_FRAGMENT"
-//    private lateinit var auth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth
     private lateinit var loginButton: Button
     private lateinit var forgotPasswordButton: Button
     private lateinit var signUpButton: Button
@@ -34,6 +37,7 @@ class LoginFragment : Fragment() {
     private lateinit var usernameField: EditText
     private lateinit var passwordField: EditText
 
+    private lateinit var applicationContext: Context
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,30 +49,67 @@ class LoginFragment : Fragment() {
         signUpButton = view.findViewById(R.id.buttonSignUp)
         usernameField = view.findViewById(R.id.usernameField)
         passwordField = view.findViewById(R.id.passwordField)
+        applicationContext = view.context.applicationContext
         return view
     }
 
     override fun onStart() {
+        auth = FirebaseAuth.getInstance();
+
         loginButton.setOnClickListener {
-            val user = usernameField.text
-            val password = passwordField.text
-            Log.d(TAG, "Login Data: ${user}:${password}")
+            loginUser()
         }
         forgotPasswordButton.setOnClickListener {
             Log.d(TAG, "Forgot Button")
         }
         signUpButton.setOnClickListener {
             Log.d(TAG, "Sign up button.")
+            (activity as MainActivity?)?.setFragment(SignUpFragment())
         }
 
         super.onStart()
     }
 
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//
-//        super.onCreate(savedInstanceState)
-//    }
+    private fun loginUser() {
+        val email = usernameField.text.toString()
+        val password = passwordField.text.toString()
+        Log.d(TAG, "Login Data: ${email}:${password}")
 
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(applicationContext,
+                "Please enter both username and password!!",
+                Toast.LENGTH_LONG)
+                .show()
+            return
+        }
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(
+                OnCompleteListener<AuthResult?> { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(
+                            applicationContext,
+                            "Login successful!!",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        // if sign-in is successful
+                        // intent to home activity
+                        val intent = Intent(
+                            activity,
+                            SITActivity::class.java
+                        )
+                        startActivity(intent)
+                    } else {
+
+                        // sign-in failed
+                        Toast.makeText(
+                            applicationContext,
+                            "Login failed!!",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                    }
+                })
+    }
 
 }

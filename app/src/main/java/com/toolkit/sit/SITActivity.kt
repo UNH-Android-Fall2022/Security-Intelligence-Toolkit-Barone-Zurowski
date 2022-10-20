@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.*
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.fragments.*
 import com.toolkit.sit.fragments.authenticated.*
 
@@ -21,7 +22,9 @@ class SITActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_SecurityIntelligenceToolkit)
         super.onCreate(savedInstanceState)
+        var user = FirebaseAuth.getInstance().getCurrentUser()
 
+        Log.i(TAG, "User is logged in: ${user}")
 //        val collection = database.collection("test")
 //
 //        collection.get()

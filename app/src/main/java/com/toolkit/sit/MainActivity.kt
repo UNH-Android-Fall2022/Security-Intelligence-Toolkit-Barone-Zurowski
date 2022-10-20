@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,5 +27,13 @@ class MainActivity : AppCompatActivity() {
     fun changeView() {
         val intent = Intent(this, SITActivity::class.java)
         startActivity(intent)
+    }
+
+    public fun setFragment(fragment: Fragment) {
+        // Create new fragment and transaction
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_view, fragment).commit()
+
     }
 }
