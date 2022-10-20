@@ -18,9 +18,7 @@ import com.toolkit.sit.R
 import com.toolkit.sit.scanner.NetScanner
 import com.toolkit.sit.util.Util
 import com.toolkit.sit.util.Util.isCIDR
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 
 /**
@@ -58,13 +56,13 @@ class ScanFragment : Fragment() {
             val subnet = editTextScanField.text.toString()
             Log.d(TAG, "${subnet.isCIDR()}")
             if (!Util.checkFieldsIfEmpty(subnet) && subnet.isCIDR()) {
-                runBlocking {
-                    withContext(Dispatchers.IO) {
-                        val openAddresses = scanner.remoteScan(subnet, 150)
-                        Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
-                        Log.d(TAG, "Open hosts $openAddresses")
-                    }
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    val openAddresses = scanner.remoteScan(subnet, 150)
+                    Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
+                    Log.d(TAG, "Open hosts $openAddresses")
                 }
+
             } else {
                 Util.popUp(appContext,"Please Enter Valid CIDR address", Toast.LENGTH_SHORT)
             }
@@ -73,12 +71,10 @@ class ScanFragment : Fragment() {
         buttonStartLocalScan.setOnClickListener {
             val localCIDR = getLocalCIDR()
             Log.i(TAG, "Local CIDR: $localCIDR")
-            runBlocking {
-                withContext(Dispatchers.IO) {
+            GlobalScope.launch(Dispatchers.IO) {
                     val openAddresses = scanner.remoteScan(localCIDR, 20)
                     Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
                     Log.d(TAG, "Open hosts $openAddresses")
-                }
             }
         }
     }
