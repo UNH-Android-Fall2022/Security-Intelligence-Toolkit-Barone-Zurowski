@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
 import com.toolkit.sit.SITActivity
 import com.toolkit.sit.util.ChangeActivity
