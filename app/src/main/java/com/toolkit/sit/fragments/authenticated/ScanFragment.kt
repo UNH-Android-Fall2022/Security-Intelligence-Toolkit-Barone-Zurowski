@@ -1,14 +1,18 @@
 package com.toolkit.sit.fragments.authenticated
 
+import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import com.toolkit.sit.R
 import com.toolkit.sit.scanner.NetScanner
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,5 +56,9 @@ class ScanFragment : Fragment() {
             Log.d("SCANNER", "Button Pressed")
             scanner.remoteScan("8.8.8.0/24")
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 }
