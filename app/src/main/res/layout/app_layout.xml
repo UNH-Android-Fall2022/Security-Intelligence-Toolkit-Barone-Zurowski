@@ -37,8 +37,8 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
         android:name="com.toolkit.sit.fragments.authenticated.HomeFragment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="409dp"
+        android:layout_height="619dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
         app:layout_constraintEnd_toEndOf="@+id/bottom_nav"
         app:layout_constraintStart_toStartOf="parent"
