@@ -16,7 +16,6 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
-
 /**
  * A simple [Fragment] subclass.
  * Use the [SignUpFragment.newInstance] factory method to
@@ -33,7 +32,6 @@ class SignUpFragment : Fragment() {
     private lateinit var passField: EditText
     private lateinit var passValidateField: EditText
     private lateinit var applicationContext: Context
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,22 +69,21 @@ class SignUpFragment : Fragment() {
         (activity as MainActivity?)?.setFragment(LoginFragment())
     }
 
-    private fun signUpUser(email: String, password: String, validatePass: String) {
+    private fun signUpUser(email: String, password: String, validatePass: String)  {
         Log.d(TAG, "Login Data: ${email}:${password}:${validatePass}")
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(validatePass)) {
             Toast.makeText(applicationContext,
                 "Please enter both username and password!!",
                 Toast.LENGTH_LONG)
                 .show()
-            return
+            0
         }
 
         if (password != validatePass) {
             Toast.makeText(applicationContext, "Password and Confirm Password do not match", Toast.LENGTH_SHORT)
                 .show()
-            return
+            0
         }
-
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(
                 OnCompleteListener<AuthResult?> { task ->
@@ -109,8 +106,6 @@ class SignUpFragment : Fragment() {
                         ).show()
                     }
                 })
-
-
     }
 
 }
