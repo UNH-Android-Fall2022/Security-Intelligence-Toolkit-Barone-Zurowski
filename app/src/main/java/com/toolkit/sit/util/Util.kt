@@ -32,6 +32,8 @@ object Util {
         manager.beginTransaction().replace(containerId, fragment).commit()
     }
 
+
+    // simple function to popup toast
     fun popUp(ctx: Context, text: String, toast: Int) {
         Toast.makeText(ctx, text, toast).show()
     }
