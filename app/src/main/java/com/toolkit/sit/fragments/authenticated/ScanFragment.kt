@@ -3,6 +3,7 @@ package com.toolkit.sit.fragments.authenticated
 import android.app.Service
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -83,12 +84,18 @@ class ScanFragment : Fragment() {
     private fun getLocalCIDR():String {
         val connectivityManager = appContext.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
 
+        val capabilties = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)!!
+
+        if(!capabilties.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            Log.i(TAG, "Wifi is not enabled")
+            return ""
+        }
         val linkProp =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork)
 
-       val correctIface = linkProp!!.routes.filter {
+        val correctIface = linkProp!!.routes.filter {
             it.`interface` == "wlan0"
-                    && it.destination.toString().isCIDR()
-                    && it.destination.toString() != "0.0.0.0/0"
+                && it.destination.toString().isCIDR()
+                && it.destination.toString() != "0.0.0.0/0"
         }
         if (correctIface.isEmpty()) {
             return ""
