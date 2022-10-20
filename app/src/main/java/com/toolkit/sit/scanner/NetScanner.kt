@@ -13,7 +13,7 @@ import java.net.*
 
 class NetScanner {
     private var TAG = "NET_SCANNER"
-    suspend fun remoteScan(cidr: String): List<Pair<String, List<Int>>> {
+    suspend fun remoteScan(cidr: String, timeout: Int): List<Pair<String, List<Int>>> {
 
         val ips: List<InetAddress> = if(cidr.split("/")[1] == "32") {
             listOf(InetAddress.getByName(cidr.split("/")[0]))
@@ -30,7 +30,7 @@ class NetScanner {
             ports.forEach { port ->
                 coroutineScope {
                     launch {
-                        if(doTCPCheck(ip, port)) {
+                        if(doTCPCheck(ip, port, timeout)) {
                            portsOpen.add(port)
                         }
                     }
@@ -45,12 +45,12 @@ class NetScanner {
         return openAddresses
     }
 
-    private fun doTCPCheck(ip: InetAddress, port: Int): Boolean {
+    private fun doTCPCheck(ip: InetAddress, port: Int, timeout: Int): Boolean {
         var socket: Socket? = null
         return try {
             Log.d(TAG, "Attempting socket: ${ip.hostAddress} : $port")
             socket = Socket()
-            socket.connect(InetSocketAddress(ip, port), 150)
+            socket.connect(InetSocketAddress(ip, port), timeout)
             true
         } catch (ex: IOException) {
             Log.d(TAG, "Error: $ex")
