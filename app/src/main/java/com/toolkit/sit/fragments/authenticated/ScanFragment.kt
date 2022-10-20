@@ -82,11 +82,17 @@ class ScanFragment : Fragment() {
         val connectivityManager = appContext.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         val linkProp =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!!
-        Log.i("myNetworkType: ", connectivityManager.activeNetwork.toString())
-        Log.i(TAG, linkProp.routes.toString())
+//        Log.i(TAG, connectivityManager.activeNetwork.toString())
 
+       val correctIface = linkProp.routes.filter {
+            it.`interface` == "wlan0"
+                    && it.destination.toString().isCIDR()
+                    && it.destination.toString() != "0.0.0.0/0"
+        }[0]
+        Log.i(TAG, correctIface.toString())
+//        Log.i(TAG, linkProp.routes[1].gateway.toString())
 //        val localIP = linkProp.linkAddresses[1].toString().split("/")[0]
-        return linkProp.routes[1].destination.toString()
+        return correctIface.destination.toString()
     }
 
 
