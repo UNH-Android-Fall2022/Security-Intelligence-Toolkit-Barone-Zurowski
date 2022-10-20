@@ -69,11 +69,13 @@ class ScanFragment : Fragment() {
 
         buttonStartLocalScan.setOnClickListener {
             val localCIDR = getLocalCIDR()
-            Log.i(TAG, "Local CIDR: $localCIDR")
-            GlobalScope.launch(Dispatchers.IO) {
+            if (localCIDR != "") {
+                Log.i(TAG, "Local CIDR: $localCIDR")
+                GlobalScope.launch(Dispatchers.IO) {
                     val openAddresses = scanner.remoteScan(localCIDR, 20)
                     Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
                     Log.d(TAG, "Open hosts $openAddresses")
+                }
             }
         }
     }
@@ -81,18 +83,17 @@ class ScanFragment : Fragment() {
     private fun getLocalCIDR():String {
         val connectivityManager = appContext.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        val linkProp =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!!
-//        Log.i(TAG, connectivityManager.activeNetwork.toString())
+        val linkProp =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork)
 
-       val correctIface = linkProp.routes.filter {
+       val correctIface = linkProp!!.routes.filter {
             it.`interface` == "wlan0"
                     && it.destination.toString().isCIDR()
                     && it.destination.toString() != "0.0.0.0/0"
-        }[0]
-        Log.i(TAG, correctIface.toString())
-//        Log.i(TAG, linkProp.routes[1].gateway.toString())
-//        val localIP = linkProp.linkAddresses[1].toString().split("/")[0]
-        return correctIface.destination.toString()
+        }
+        if (correctIface.isEmpty()) {
+            return ""
+        }
+        return correctIface[0].destination.toString()
     }
 
 
