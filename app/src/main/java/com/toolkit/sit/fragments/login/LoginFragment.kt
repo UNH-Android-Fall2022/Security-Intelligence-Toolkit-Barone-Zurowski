@@ -3,7 +3,6 @@ package com.toolkit.sit.fragments.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.R
 import com.toolkit.sit.SITActivity
-import com.toolkit.sit.util.ChangeActivity
+import com.toolkit.sit.util.Util
 
 
 /**
@@ -73,7 +72,7 @@ class LoginFragment : Fragment() {
 
     private fun setNewFrag(frag: Fragment) {
 
-        ChangeActivity.mainFragment(activity, frag)
+        Util.mainFragment(activity, frag)
     }
 
     private fun loginUser() {
@@ -81,22 +80,16 @@ class LoginFragment : Fragment() {
         val password = passwordField.text.toString()
         Log.d(TAG, "Login Data: ${email}:${password}")
 
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(applicationContext,
-                "Please enter both username and password!!",
-                Toast.LENGTH_LONG)
-                .show()
+        if(Util.checkFieldsIfEmpty(email, password)) {
+            Util.popUp(applicationContext, "Please enter both username and password!!", Toast.LENGTH_LONG)
             return
         }
+
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(
                 OnCompleteListener<AuthResult?> { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(
-                            applicationContext,
-                            "Login successful!!",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Util.popUp(applicationContext, "Login successful!!", Toast.LENGTH_LONG)
 
                         // if sign-in is successful
                         // intent to home activity
@@ -106,14 +99,7 @@ class LoginFragment : Fragment() {
                         )
                         startActivity(intent)
                     } else {
-
-                        // sign-in failed
-                        Toast.makeText(
-                            applicationContext,
-                            "Login failed!!",
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
+                        Util.popUp(applicationContext, "Login Failed!!", Toast.LENGTH_LONG)
                     }
                 })
     }

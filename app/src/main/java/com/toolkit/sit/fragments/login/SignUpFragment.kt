@@ -2,7 +2,6 @@ package com.toolkit.sit.fragments.login
 
 import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,9 +13,8 @@ import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
-import com.toolkit.sit.util.ChangeActivity
+import com.toolkit.sit.util.Util
 
 /**
  * A simple [Fragment] subclass.
@@ -63,49 +61,38 @@ class SignUpFragment : Fragment() {
             val email = emailField.text.toString()
             val password = passField.text.toString()
             val validatePass = passValidateField.text.toString()
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(validatePass)) {
-                Toast.makeText(applicationContext,
-                    "Please enter both username and password!!",
-                    Toast.LENGTH_LONG)
-                    .show()
-            }
-            else if (password != validatePass) {
-                Toast.makeText(applicationContext, "Password and Confirm Password do not match", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            else {
-                signUpUser(email, password, validatePass)
-            }
+
+            signUpUser(email, password, validatePass)
+
         }
     }
 
     private fun goBack() {
-        ChangeActivity.mainFragment(activity, LoginFragment())
+        Util.mainFragment(activity, LoginFragment())
     }
 
     private fun signUpUser(email: String, password: String, validatePass: String)  {
         Log.d(TAG, "Login Data: ${email}:${password}:${validatePass}")
 
+        if(Util.checkFieldsIfEmpty(email, password, validatePass)) {
+            Util.popUp(applicationContext, "Please enter both username and password!!", Toast.LENGTH_LONG)
+
+            return
+        }
+        else if (password != validatePass) {
+            Util.popUp(applicationContext, "Password and Confirm Password do not match", Toast.LENGTH_LONG)
+
+            return
+        }
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(
                 OnCompleteListener<AuthResult?> { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(
-                            applicationContext,
-                            "Signup successful!!",
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                        // if sign-in is successful
-                        // intent to home activity
+                        Util.popUp(applicationContext, "SignUp Sucessful!", Toast.LENGTH_LONG)
                         goBack()
                     } else {
-                        // sign-in failed
-                        Toast.makeText(
-                            applicationContext,
-                            "Signup failed!!",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Util.popUp(applicationContext, "SignUp Failed!", Toast.LENGTH_LONG)
                     }
                 })
     }

@@ -2,7 +2,6 @@ package com.toolkit.sit.fragments.login
 
 import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.R
-import com.toolkit.sit.util.ChangeActivity
+import com.toolkit.sit.util.Util
 
 
 /**
@@ -53,13 +52,15 @@ class ResetPasswordFragment : Fragment() {
         auth = FirebaseAuth.getInstance();
 
         backButton.setOnClickListener {
-            ChangeActivity.mainFragment(activity, LoginFragment())
+            Util.mainFragment(activity, LoginFragment())
         }
 
         forgotButton.setOnClickListener {
             val email = emailText.text.toString()
-            if (!TextUtils.isEmpty(email)) {
+            if(!Util.checkFieldsIfEmpty(email)) {
                 sendEmailReset(email)
+            } else {
+                Util.popUp(applicationContext, "Please Enter email", Toast.LENGTH_LONG)
             }
         }
 
@@ -69,15 +70,12 @@ class ResetPasswordFragment : Fragment() {
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener(OnCompleteListener<Void?> { task ->
                 if (task.isSuccessful) {
-                    // if isSuccessful then done message will be shown
-                    // and you can change the password
-                    Toast.makeText(applicationContext, "Done sent", Toast.LENGTH_LONG).show()
+                    Util.popUp(applicationContext, "Done sent", Toast.LENGTH_LONG)
                 } else {
-                    Toast.makeText(applicationContext, "Error Occurred", Toast.LENGTH_LONG)
-                        .show()
+                    Util.popUp(applicationContext, "Error Occurred", Toast.LENGTH_LONG)
                 }
             }).addOnFailureListener(OnFailureListener {
-                Toast.makeText(applicationContext, "Error Failed", Toast.LENGTH_LONG).show()
+                Util.popUp(applicationContext, "Error Failed", Toast.LENGTH_LONG)
             })
     }
 
