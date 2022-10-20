@@ -84,7 +84,8 @@ class ScanFragment : Fragment() {
     private fun getLocalCIDR():String {
         val connectivityManager = appContext.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        val capabilties = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)!!
+        val capabilties = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            ?: return ""
 
         if(!capabilties.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
             Log.i(TAG, "Wifi is not enabled")
