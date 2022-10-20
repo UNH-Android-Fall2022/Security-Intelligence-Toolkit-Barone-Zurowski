@@ -52,9 +52,8 @@ class ScanFragment : Fragment() {
         super.onStart()
         val scanner = NetScanner()
         remoteScanButton.setOnClickListener {
-            Log.d(TAG, "Button Pressed")
             val subnet = editTextScanField.text.toString()
-            Log.d(TAG, "${subnet.isCIDR()}")
+
             if (!Util.checkFieldsIfEmpty(subnet) && subnet.isCIDR()) {
 
                 GlobalScope.launch(Dispatchers.IO) {
@@ -84,10 +83,10 @@ class ScanFragment : Fragment() {
 
         val linkProp =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!!
         Log.i("myNetworkType: ", connectivityManager.activeNetwork.toString())
+        Log.i(TAG, linkProp.routes.toString())
 
 //        val localIP = linkProp.linkAddresses[1].toString().split("/")[0]
-
-        return linkProp.routes[3].destination.toString()
+        return linkProp.routes[1].destination.toString()
     }
 
 
