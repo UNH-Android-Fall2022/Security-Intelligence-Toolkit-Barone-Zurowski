@@ -16,6 +16,8 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
+import com.toolkit.sit.util.ChangeActivity
+
 /**
  * A simple [Fragment] subclass.
  * Use the [SignUpFragment.newInstance] factory method to
@@ -61,29 +63,29 @@ class SignUpFragment : Fragment() {
             val email = emailField.text.toString()
             val password = passField.text.toString()
             val validatePass = passValidateField.text.toString()
-            signUpUser(email, password, validatePass)
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(validatePass)) {
+                Toast.makeText(applicationContext,
+                    "Please enter both username and password!!",
+                    Toast.LENGTH_LONG)
+                    .show()
+            }
+            else if (password != validatePass) {
+                Toast.makeText(applicationContext, "Password and Confirm Password do not match", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            else {
+                signUpUser(email, password, validatePass)
+            }
         }
     }
 
     private fun goBack() {
-        (activity as MainActivity?)?.setFragment(LoginFragment())
+        ChangeActivity.mainFragment(activity, LoginFragment())
     }
 
     private fun signUpUser(email: String, password: String, validatePass: String)  {
         Log.d(TAG, "Login Data: ${email}:${password}:${validatePass}")
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(validatePass)) {
-            Toast.makeText(applicationContext,
-                "Please enter both username and password!!",
-                Toast.LENGTH_LONG)
-                .show()
-            0
-        }
 
-        if (password != validatePass) {
-            Toast.makeText(applicationContext, "Password and Confirm Password do not match", Toast.LENGTH_SHORT)
-                .show()
-            0
-        }
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(
                 OnCompleteListener<AuthResult?> { task ->

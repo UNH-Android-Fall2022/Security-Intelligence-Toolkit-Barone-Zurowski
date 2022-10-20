@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
 import com.toolkit.sit.SITActivity
-
+import com.toolkit.sit.util.ChangeActivity
 
 
 /**
@@ -61,13 +61,20 @@ class LoginFragment : Fragment() {
         }
         forgotPasswordButton.setOnClickListener {
             Log.d(TAG, "Forgot Button")
+            setNewFrag(ResetPasswordFragment())
         }
         signUpButton.setOnClickListener {
             Log.d(TAG, "Sign up button.")
-            (activity as MainActivity?)?.setFragment(SignUpFragment())
+
+            setNewFrag(SignUpFragment())
         }
 
         super.onStart()
+    }
+
+    private fun setNewFrag(frag: Fragment) {
+
+        ChangeActivity.mainFragment(activity, frag)
     }
 
     private fun loginUser() {

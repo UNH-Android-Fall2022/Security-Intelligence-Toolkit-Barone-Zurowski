@@ -25,17 +25,6 @@ class SITActivity : AppCompatActivity() {
         var user = FirebaseAuth.getInstance().getCurrentUser()
 
         Log.i(TAG, "User is logged in: ${user}")
-//        val collection = database.collection("test")
-//
-//        collection.get()
-//            .addOnSuccessListener { documents ->
-//                for (document in documents) {
-//                    Log.d(TAG, "${document.id} => ${document.data}")
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.w(TAG, "Error getting documents: ", exception)
-//            }
 
         setContentView(R.layout.app_layout)
 
