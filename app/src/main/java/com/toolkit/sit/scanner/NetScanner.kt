@@ -4,46 +4,60 @@ import android.os.Build
 import android.os.StrictMode
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.net.util.SubnetUtils
 import java.io.IOException
 import java.net.*
 
 class NetScanner {
-    public fun remoteScan(cidr: String): Int {
-        val ips = getIPs(cidr)
-        val ports = listOf<Int>(80, 443)
+    private var TAG = "NET_SCANNER"
+    suspend fun remoteScan(cidr: String): List<Pair<String, List<Int>>> {
+
+        val ips: List<InetAddress> = if(cidr.split("/")[1] == "32") {
+            listOf(InetAddress.getByName(cidr.split("/")[0]))
+        } else {
+            getIPs(cidr)
+        }
+
+        val openAddresses = mutableListOf<Pair<String, List<Int>>>()
+
+        val ports = listOf(80, 443)
 
         ips.forEach { ip ->
+            val portsOpen = mutableListOf<Int>()
             ports.forEach { port ->
-                doTCPCheck(ip, port)
+                coroutineScope {
+                    launch {
+                        if(doTCPCheck(ip, port)) {
+                           portsOpen.add(port)
+                        }
+                    }
+                }
+            }
+
+            if(portsOpen.size > 0) {
+                openAddresses.add(Pair(ip.hostAddress, portsOpen))
             }
         }
 
-        return 0
+        return openAddresses
     }
 
     private fun doTCPCheck(ip: InetAddress, port: Int): Boolean {
-
-        val SDK_INT = Build.VERSION.SDK_INT
-        if (SDK_INT > 8) {
-            val policy = StrictMode.ThreadPolicy.Builder()
-                .permitAll().build()
-            StrictMode.setThreadPolicy(policy)
-        }
-
         var socket: Socket? = null
-        try {
-            Log.d("SCANNER", "Attempting socket: $ip : $port")
+        return try {
+            Log.d(TAG, "Attempting socket: ${ip.hostAddress} : $port")
             socket = Socket()
-            socket.connect(InetSocketAddress(ip, port), 1000)
-            return true
+            socket.connect(InetSocketAddress(ip, port), 150)
+            true
         } catch (ex: IOException) {
-            Log.d("SCANNER", "Error: $ex")
-            return false
+            Log.d(TAG, "Error: $ex")
+            false
         } catch (ex: SocketTimeoutException) {
-            Log.d("SCANNER", "Error: $ex")
-            return false
+            Log.d(TAG, "Error: $ex")
+            false
         } finally {
             socket?.close()
         }

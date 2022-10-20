@@ -1,23 +1,24 @@
 package com.toolkit.sit.fragments.authenticated
 
-import android.os.Build
+import android.content.Context
 import android.os.Bundle
-import android.os.StrictMode
-import android.os.StrictMode.ThreadPolicy
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.toolkit.sit.R
 import com.toolkit.sit.scanner.NetScanner
+import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.isCIDR
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -25,19 +26,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ScanFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     private lateinit var remoteScanButton: Button
+    private lateinit var editTextScanField: EditText
+    private lateinit var appContext: Context
+    private var TAG = "SCAN_FRAGMENT"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +40,8 @@ class ScanFragment : Fragment() {
         // Inflate the layout for this fragment
         val view: View = inflater!!.inflate(R.layout.fragment_scan, container, false)
         remoteScanButton = view.findViewById(R.id.buttonStartRemoteScan)
+        editTextScanField = view.findViewById(R.id.editTextRemoteSubnet)
+        appContext = view.context.applicationContext
         return view
     }
 
@@ -53,12 +49,22 @@ class ScanFragment : Fragment() {
         super.onStart()
         val scanner = NetScanner()
         remoteScanButton.setOnClickListener {
-            Log.d("SCANNER", "Button Pressed")
-            scanner.remoteScan("8.8.8.0/24")
+            Log.d(TAG, "Button Pressed")
+            val subnet = editTextScanField.text.toString()
+            Log.d(TAG, "${subnet.isCIDR()}")
+            if (!Util.checkFieldsIfEmpty(subnet) && subnet.isCIDR()) {
+                runBlocking {
+                    withContext(Dispatchers.IO) {
+                        val openAddresses = scanner.remoteScan(subnet)
+
+                        Log.d(TAG, "Open hosts $openAddresses")
+                    }
+                }
+            } else {
+                Util.popUp(appContext,"Please Enter Valid CIDR address", Toast.LENGTH_SHORT)
+            }
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
+
 }
