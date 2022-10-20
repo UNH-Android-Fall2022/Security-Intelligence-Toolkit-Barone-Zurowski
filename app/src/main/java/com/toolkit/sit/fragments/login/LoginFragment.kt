@@ -1,60 +1,107 @@
 package com.toolkit.sit.fragments.login
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.R
+import com.toolkit.sit.SITActivity
+import com.toolkit.sit.util.Util
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
+ * Use the [LoginFragment] factory method to
  * create an instance of this fragment.
  */
 class LoginFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    // https://stackoverflow.com/questions/13216916/how-to-replace-the-activitys-fragment-from-the-fragment-itself
+    private var TAG = "LOGIN_FRAGMENT"
+    private lateinit var auth: FirebaseAuth
+    private lateinit var loginButton: Button
+    private lateinit var forgotPasswordButton: Button
+    private lateinit var signUpButton: Button
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var usernameField: EditText
+    private lateinit var passwordField: EditText
 
+    private lateinit var applicationContext: Context
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.login_fragment, container, false)
+        val view: View = inflater!!.inflate(R.layout.login_fragment, container, false)
+
+        loginButton = view.findViewById(R.id.buttonLogin)
+        forgotPasswordButton = view.findViewById(R.id.buttonForgotPassword)
+        signUpButton = view.findViewById(R.id.buttonSignUp)
+        usernameField = view.findViewById(R.id.usernameField)
+        passwordField = view.findViewById(R.id.passwordField)
+        applicationContext = view.context.applicationContext
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HistoryFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            LoginFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onStart() {
+        auth = FirebaseAuth.getInstance();
+
+        loginButton.setOnClickListener {
+            loginUser()
+        }
+        forgotPasswordButton.setOnClickListener {
+            Log.d(TAG, "Forgot Button")
+            setNewFrag(ResetPasswordFragment())
+        }
+        signUpButton.setOnClickListener {
+            Log.d(TAG, "Sign up button.")
+
+            setNewFrag(SignUpFragment())
+        }
+
+        super.onStart()
     }
+
+    private fun setNewFrag(frag: Fragment) {
+
+        Util.mainFragment(activity, frag)
+    }
+
+    private fun loginUser() {
+        val email = usernameField.text.toString()
+        val password = passwordField.text.toString()
+        Log.d(TAG, "Login Data: ${email}:${password}")
+
+        if(Util.checkFieldsIfEmpty(email, password)) {
+            Util.popUp(applicationContext, "Please enter both username and password!!", Toast.LENGTH_LONG)
+            return
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(
+                OnCompleteListener<AuthResult?> { task ->
+                    if (task.isSuccessful) {
+                        Util.popUp(applicationContext, "Login successful!!", Toast.LENGTH_LONG)
+
+                        // if sign-in is successful
+                        // intent to home activity
+                        val intent = Intent(
+                            activity,
+                            SITActivity::class.java
+                        )
+                        startActivity(intent)
+                    } else {
+                        Util.popUp(applicationContext, "Login Failed!!", Toast.LENGTH_LONG)
+                    }
+                })
+    }
+
 }

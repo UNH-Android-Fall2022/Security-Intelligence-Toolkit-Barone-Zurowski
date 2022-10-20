@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.*
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.fragments.*
 import com.toolkit.sit.fragments.authenticated.*
+import com.toolkit.sit.util.Util
 
 
 class SITActivity : AppCompatActivity() {
@@ -21,45 +23,17 @@ class SITActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_SecurityIntelligenceToolkit)
         super.onCreate(savedInstanceState)
+        var email = FirebaseAuth.getInstance().currentUser?.email
 
-//        val collection = database.collection("test")
-//
-//        collection.get()
-//            .addOnSuccessListener { documents ->
-//                for (document in documents) {
-//                    Log.d(TAG, "${document.id} => ${document.data}")
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.w(TAG, "Error getting documents: ", exception)
-//            }
+        Log.i(TAG, "User is logged in: $email")
 
         setContentView(R.layout.app_layout)
-
 
         topNavigationView = findViewById(R.id.topAppBar)
         bottomNavigationView = findViewById(R.id.bottom_nav)
 
         bottomNavigationView.setOnItemSelectedListener { menuItem : MenuItem ->
-            when(menuItem.itemId) {
-                R.id.HomeFragment -> {
-                    Log.d(TAG, "Home")
-                    setFragment(HomeFragment())
-                }
-                R.id.ScanFragment -> {
-                    Log.d(TAG, "Scan")
-                    setFragment(ScanFragment())
-
-                }
-                R.id.ShodanFragment -> {
-                    Log.d(TAG, "Shodan")
-                    setFragment(ShodanFragment())
-                }
-                R.id.HistoryFragment -> {
-                    Log.d(TAG, "History")
-                    setFragment(HistoryFragment())
-                }
-            }
+            bottomNavIconClicked(menuItem)
             true
         }
 
@@ -67,20 +41,36 @@ class SITActivity : AppCompatActivity() {
 
             if(menuItem.itemId == R.id.SettingsFragment) {
                 Log.d(TAG, "Settings")
-                setFragment(SettingsFragment())
+                setFrag(SettingsFragment())
             }
             true
         }
-
-
-
     }
 
-    private fun setFragment(fragment: Fragment) {
-        // Create new fragment and transaction
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_view, fragment).commit()
-
+    // handle bottom nav bar icon clicked
+    private fun bottomNavIconClicked(menuItem: MenuItem) {
+        when(menuItem.itemId) {
+            R.id.HomeFragment -> {
+                Log.d(TAG, "Home")
+                setFrag(HomeFragment())
+            }
+            R.id.ScanFragment -> {
+                Log.d(TAG, "Scan")
+                setFrag(ScanFragment())
+            }
+            R.id.ShodanFragment -> {
+                Log.d(TAG, "Shodan")
+                setFrag(ShodanFragment())
+            }
+            R.id.HistoryFragment -> {
+                Log.d(TAG, "History")
+                setFrag(HistoryFragment())
+            }
+        }
     }
+
+    private fun setFrag(fragment: Fragment) {
+        Util.setFragment(supportFragmentManager, R.id.fragment_container_view,fragment)
+    }
+
 }

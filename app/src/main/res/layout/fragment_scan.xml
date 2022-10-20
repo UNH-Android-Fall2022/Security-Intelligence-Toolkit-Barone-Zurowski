@@ -5,12 +5,55 @@
     android:layout_height="match_parent"
     tools:context="com.toolkit.sit.fragments.authenticated.ScanFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/scan"
+        android:gravity="center_horizontal|top"
+        android:text="Network Scan"
         android:textSize="60sp" />
+
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="120sp"
+        android:text="Remote Scan"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editTextRemoteSubnet"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="80sp"
+        android:ems="10"
+        android:hint="Subnet to Scan (Example: 8.8.8.0/24)"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/buttonStartRemoteScan"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="40sp"
+        android:text="START REMOTE SCAN" />
+
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="-10sp"
+        android:text="Automatically Scan Local Subnet"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/buttonStartLocalScan"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="-50sp"
+        android:text="START LOCAL SCAN" />
 
 </FrameLayout>
