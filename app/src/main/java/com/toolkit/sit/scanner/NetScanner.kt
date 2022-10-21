@@ -13,7 +13,7 @@ import java.net.*
 
 class NetScanner {
     private var TAG = "NET_SCANNER"
-    suspend fun remoteScan(cidr: String, timeout: Int): List<Pair<String, List<Int>>> {
+    suspend fun remoteScan(cidr: String, timeout: Int): List<MutableMap<String, List<Int>>> {
 
         val ips: List<InetAddress> = if(cidr.split("/")[1] == "32") {
             listOf(InetAddress.getByName(cidr.split("/")[0]))
@@ -21,7 +21,7 @@ class NetScanner {
             getIPs(cidr)
         }
 
-        val openAddresses = mutableListOf<Pair<String, List<Int>>>()
+        val openAddresses = mutableListOf<MutableMap<String, List<Int>>>()
 
         val ports = listOf(80, 443)
 
@@ -38,7 +38,9 @@ class NetScanner {
             }
 
             if(portsOpen.size > 0) {
-                openAddresses.add(Pair(ip.hostAddress, portsOpen))
+                val openPortsMap: MutableMap<String, List<Int>> = HashMap()
+                openPortsMap[ip.hostAddress] = portsOpen
+                openAddresses.add(openPortsMap)
             }
         }
 

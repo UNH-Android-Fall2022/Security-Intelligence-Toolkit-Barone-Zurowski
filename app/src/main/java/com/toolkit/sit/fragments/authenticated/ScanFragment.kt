@@ -13,13 +13,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.firebase.Timestamp
 //import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.toolkit.sit.R
 import com.toolkit.sit.scanner.NetScanner
 import com.toolkit.sit.util.Util
 import com.toolkit.sit.util.Util.isCIDR
 import kotlinx.coroutines.*
+import java.time.Instant
+import java.util.*
+import kotlin.collections.HashMap
 
 
 /**
@@ -41,7 +47,7 @@ class ScanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view: View = inflater!!.inflate(R.layout.fragment_scan, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_scan, container, false)
         remoteScanButton = view.findViewById(R.id.buttonStartRemoteScan)
         editTextScanField = view.findViewById(R.id.editTextRemoteSubnet)
         buttonStartLocalScan = view.findViewById(R.id.buttonStartLocalScan)
@@ -60,6 +66,15 @@ class ScanFragment : Fragment() {
                 GlobalScope.launch(Dispatchers.IO) {
                     val openAddresses = scanner.remoteScan(subnet, 150)
                     Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
+
+                    val data: MutableMap<String, Any> = HashMap()
+                    data["created_at"] = Timestamp.now()
+                    data["results"] = openAddresses
+                    data["uid"] = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+                    val db = Firebase.firestore
+                    db.collection("scans").add(data)
+
                     Log.d(TAG, "Open hosts $openAddresses")
                 }
 
@@ -75,6 +90,15 @@ class ScanFragment : Fragment() {
                 GlobalScope.launch(Dispatchers.IO) {
                     val openAddresses = scanner.remoteScan(localCIDR, 20)
                     Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
+
+                    val data: MutableMap<String, Any> = HashMap()
+                    data["created_at"] = Timestamp.now()
+                    data["results"] = openAddresses
+                    data["uid"] = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+                    val db = Firebase.firestore
+                    db.collection("scans").add(data)
+
                     Log.d(TAG, "Open hosts $openAddresses")
                 }
             }
