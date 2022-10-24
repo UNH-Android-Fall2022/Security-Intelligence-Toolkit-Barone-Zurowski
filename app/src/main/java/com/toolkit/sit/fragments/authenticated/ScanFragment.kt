@@ -82,10 +82,10 @@ class ScanFragment : Fragment() {
             val db = Firebase.firestore
             db.collection("scans").add(
                 NetworkScanModel(
-                    CreatedTime = Timestamp.now(),
-                    Results = openAddresses,
-                    IsLocalScan = isLocalScan,
-                    AttemptedScan = subnet,
+                    createdTime = Timestamp.now(),
+                    results = openAddresses,
+                    isLocalScan = isLocalScan,
+                    attemptedScan = subnet,
                     uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
                 )
             )
