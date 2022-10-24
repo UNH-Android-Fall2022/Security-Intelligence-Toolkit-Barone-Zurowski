@@ -14,7 +14,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.Timestamp
-//import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -24,14 +23,11 @@ import com.toolkit.sit.scanner.NetScanner
 import com.toolkit.sit.util.Util
 import com.toolkit.sit.util.Util.isCIDR
 import kotlinx.coroutines.*
-import java.time.Instant
-import java.util.*
-import kotlin.collections.HashMap
 
 
 /**
  * A simple [Fragment] subclass.
- * Use the [ScanFragment.newInstance] factory method to
+ * Use the [ScanFragment] factory method to
  * create an instance of this fragment.
  */
 class ScanFragment : Fragment() {

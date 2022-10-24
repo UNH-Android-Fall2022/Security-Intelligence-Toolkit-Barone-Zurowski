@@ -52,7 +52,8 @@ class HistoryFragment : Fragment() {
 
         val query: Query = db
             .collection("scans")
-//            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid.toString())
+            .orderBy("createdTime",Query.Direction.DESCENDING)
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid.toString())
 
         val options = FirestoreRecyclerOptions.Builder<NetworkScanModel>()
             .setQuery(query, NetworkScanModel::class.java)
