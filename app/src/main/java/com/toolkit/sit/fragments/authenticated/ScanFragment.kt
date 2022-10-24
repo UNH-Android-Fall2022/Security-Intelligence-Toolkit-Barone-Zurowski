@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.toolkit.sit.R
+import com.toolkit.sit.models.NetworkScanModel
 import com.toolkit.sit.scanner.NetScanner
 import com.toolkit.sit.util.Util
 import com.toolkit.sit.util.Util.isCIDR
@@ -60,24 +61,8 @@ class ScanFragment : Fragment() {
         val scanner = NetScanner()
         remoteScanButton.setOnClickListener {
             val subnet = editTextScanField.text.toString()
-
             if (!Util.checkFieldsIfEmpty(subnet) && subnet.isCIDR()) {
-
-                GlobalScope.launch(Dispatchers.IO) {
-                    val openAddresses = scanner.remoteScan(subnet, 150)
-                    Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
-
-                    val data: MutableMap<String, Any> = HashMap()
-                    data["created_at"] = Timestamp.now()
-                    data["results"] = openAddresses
-                    data["uid"] = FirebaseAuth.getInstance().currentUser?.uid.toString()
-
-                    val db = Firebase.firestore
-                    db.collection("scans").add(data)
-
-                    Log.d(TAG, "Open hosts $openAddresses")
-                }
-
+                runScanAndWrite(scanner, subnet, false, 150)
             } else {
                 Util.popUp(appContext,"Please Enter Valid CIDR address", Toast.LENGTH_SHORT)
             }
@@ -85,23 +70,27 @@ class ScanFragment : Fragment() {
 
         buttonStartLocalScan.setOnClickListener {
             val localCIDR = getLocalCIDR()
-            if (localCIDR != "") {
-                Log.i(TAG, "Local CIDR: $localCIDR")
-                GlobalScope.launch(Dispatchers.IO) {
-                    val openAddresses = scanner.remoteScan(localCIDR, 20)
-                    Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
+            runScanAndWrite(scanner, localCIDR, true, 20)
+        }
+    }
 
-                    val data: MutableMap<String, Any> = HashMap()
-                    data["created_at"] = Timestamp.now()
-                    data["results"] = openAddresses
-                    data["uid"] = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private fun runScanAndWrite(scanner: NetScanner, subnet: String, isLocalScan: Boolean, timeout: Int) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val openAddresses = scanner.remoteScan(subnet, timeout)
+            Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
 
-                    val db = Firebase.firestore
-                    db.collection("scans").add(data)
+            val db = Firebase.firestore
+            db.collection("scans").add(
+                NetworkScanModel(
+                    CreatedTime = Timestamp.now(),
+                    Results = openAddresses,
+                    IsLocalScan = isLocalScan,
+                    AttemptedScan = subnet,
+                    uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                )
+            )
 
-                    Log.d(TAG, "Open hosts $openAddresses")
-                }
-            }
+            Log.d(TAG, "Open hosts $openAddresses")
         }
     }
 

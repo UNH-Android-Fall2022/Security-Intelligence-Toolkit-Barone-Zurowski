@@ -68,4 +68,7 @@ dependencies {
     // Import retrofit and GSON for parsing shodan
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+
+    // serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
 }
