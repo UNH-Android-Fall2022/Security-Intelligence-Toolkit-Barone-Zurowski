@@ -22,7 +22,7 @@ class ScanAdapter(options: FirestoreRecyclerOptions<NetworkScanModel>)
     override fun onBindViewHolder(holder: NetworkScanView, position: Int, model: NetworkScanModel) {
         Log.d(TAG, "View binded: $model")
         holder.createdStamp.text = "Date: ${model.createdTime.toDate()}"
-        holder.cidrView.text = "Address: ${model.attemptedScan}"
+        holder.cidrView.text = "Scan: ${model.attemptedScan}"
         holder.results.text = "Results: ${model.results}"
     }
 

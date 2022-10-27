@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.toolkit.sit.fragments.authenticated.SettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,4 +12,11 @@
         android:text="@string/settings"
         android:textSize="60sp" />
 
+    <Button
+        android:id="@+id/button_log_out"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_marginTop="150dp"
+        android:text="Logout" />
 </FrameLayout>

@@ -10,31 +10,27 @@
         android:id="@+id/scanTimestamp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="5dp"
+        android:paddingLeft="20dp"
         android:text="TextView"
-        android:textSize="16dp"
+        android:textSize="24dp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/scanCIDR"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="5dp"
+        android:paddingLeft="20dp"
         android:text="TextView"
-        android:textSize="32dp"
+        android:textSize="24dp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/resultsScan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="5dp"
+        android:paddingLeft="20dp"
         android:text="TextView"
-        android:textColor="@color/white"
-        android:textSize="16dp"
+        android:textSize="24dp"
         android:textStyle="bold" />
 
     <View
