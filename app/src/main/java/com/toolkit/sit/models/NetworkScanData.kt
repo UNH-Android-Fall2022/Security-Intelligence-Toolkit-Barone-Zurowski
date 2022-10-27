@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NetworkScanModel(
-    val createdTime: Timestamp = Timestamp.now(),
+    override val createdTime: Timestamp = Timestamp.now(),
+    override val uid: String = "",
     val results:  List<MutableMap<String, List<Int>>> = mutableListOf(
         hashMapOf("" to listOf())
     ),
     val attemptedScan: String = "",
     val isLocalScan: Boolean = false,
-    val uid: String = ""
-)
+): IScanModel
