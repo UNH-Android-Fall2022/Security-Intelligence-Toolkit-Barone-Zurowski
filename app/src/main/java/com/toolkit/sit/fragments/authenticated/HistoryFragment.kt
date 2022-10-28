@@ -60,7 +60,7 @@ class HistoryFragment : Fragment() {
             .build()
 
 
-        scanAdapter = ScanAdapter(options)
+        scanAdapter = ScanAdapter(options )
         Log.d(TAG, scanAdapter.itemCount.toString())
         recycleViewNetworkScan.adapter = scanAdapter
 
