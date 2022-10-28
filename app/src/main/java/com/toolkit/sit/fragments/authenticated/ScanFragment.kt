@@ -64,6 +64,8 @@ class ScanFragment : Fragment() {
             }
         }
 
+        buttonStartLocalScan.text = "Start Local Scan (${getLocalCIDR()})"
+
         buttonStartLocalScan.setOnClickListener {
             val localCIDR = getLocalCIDR()
             runScanAndWrite(scanner, localCIDR, true, 20)
