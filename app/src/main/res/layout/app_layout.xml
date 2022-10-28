@@ -27,7 +27,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/top_menu"
-            app:navigationIcon="@drawable/logo_dev"
+            app:navigationIcon="@drawable/sit_logo"
             app:navigationIconTint="#FFFFFF"
             app:subtitleTextColor="#FFFFFF"
             app:title="SIT"
