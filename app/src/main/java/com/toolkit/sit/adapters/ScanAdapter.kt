@@ -3,6 +3,7 @@ package com.toolkit.sit.adapters
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.toolkit.sit.models.NetworkScanModel
@@ -22,13 +23,18 @@ class ScanAdapter(options: FirestoreRecyclerOptions<NetworkScanModel>)
     override fun onBindViewHolder(holder: NetworkScanView, position: Int, model: NetworkScanModel) {
         Log.d(TAG, model::class.java.typeName.toString())
 
-        if (model.isNetworkScan == true) {
+        if (model.isNetworkScan) {
+            // eventually have but
             Log.d(TAG, "View binded: $model")
             holder.createdStamp.text = "Date: ${model.createdTime.toDate()}"
             holder.cidrView.text = "Scan: ${model.attemptedScan}"
             holder.results.text = "Results: ${model.results}"
-        } else {
 
+            holder.button.setOnClickListener {
+                Log.d(TAG, model.toString())
+            }
+        } else {
+            // TODO: is not network scan
         }
     }
 
