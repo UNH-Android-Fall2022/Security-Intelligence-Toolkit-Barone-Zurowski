@@ -27,14 +27,19 @@ class ScanAdapter(options: FirestoreRecyclerOptions<NetworkScanModel>, private v
     override fun onBindViewHolder(holder: NetworkScanView, position: Int, model: NetworkScanModel) {
         Log.d(TAG, model::class.java.typeName.toString())
         Log.d(TAG, "View binded: $model")
+
+        // check if shodan or not
         if (model.isNetworkScan) {
             holder.createdStamp.text = "Date: ${model.createdTime.toDate()}"
             holder.cidrView.text = "Scan: ${model.attemptedScan}"
-            holder.results.text = "Results: ${model.results}"
+//            holder.results.text = "Results: ${model.results}"
+            holder.results.text = ""
         } else {
             // TODO: SHODAN data
         }
 
+        // each item should have a click listener that if clicked
+        // will show more detailed information about the scan/shodan
         holder.button.setOnClickListener {
             Log.d(TAG, model.toString())
             if (model.isNetworkScan) {

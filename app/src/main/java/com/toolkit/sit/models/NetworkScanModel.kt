@@ -3,6 +3,8 @@ package com.toolkit.sit.models
 import com.google.firebase.Timestamp
 import kotlinx.serialization.Serializable
 
+
+// Firebase Data class model for network scans and shodan.
 @Serializable
 data class NetworkScanModel(
     val createdTime: Timestamp = Timestamp.now(),

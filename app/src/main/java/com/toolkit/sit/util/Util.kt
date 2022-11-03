@@ -37,6 +37,7 @@ object Util {
     fun popUp(ctx: Context, text: String, toast: Int) {
         Toast.makeText(ctx, text, toast).show()
     }
+    // util to check cidr notation of string
     fun String.isCIDR(): Boolean =
         this.matches(Regex("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\/(\\d{1,2})"))
 

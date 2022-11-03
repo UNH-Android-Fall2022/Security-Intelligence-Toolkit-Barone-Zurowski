@@ -18,11 +18,6 @@ import com.toolkit.sit.R
 import com.toolkit.sit.adapters.ScanAdapter
 import com.toolkit.sit.models.NetworkScanModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 /**
  * A simple [Fragment] subclass.
  * Use the [HistoryFragment.newInstance] factory method to
@@ -45,18 +40,23 @@ class HistoryFragment(private val fragManager: FragmentManager) : Fragment() {
         val view: View = inflater.inflate(R.layout.fragment_history, container, false)
 
         appContext = view.context
+
+        // where the recycle view is located
         recycleViewNetworkScan = view.findViewById(R.id.networkView)
 
+        // query used to get ordered scans by date and ensure correct UID
         val query: Query = db
             .collection("scans")
             .orderBy("createdTime",Query.Direction.DESCENDING)
             .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid.toString())
 
+        // setup the firestore using the NetworkScanModel
         val options = FirestoreRecyclerOptions.Builder<NetworkScanModel>()
             .setQuery(query, NetworkScanModel::class.java)
             .build()
 
 
+        // setup the adapter used for each Recycler
         scanAdapter = ScanAdapter(options, fragManager)
         Log.d(TAG, scanAdapter.itemCount.toString())
         recycleViewNetworkScan.adapter = scanAdapter
@@ -67,6 +67,7 @@ class HistoryFragment(private val fragManager: FragmentManager) : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        // use linear layout
         recycleViewNetworkScan.layoutManager = LinearLayoutManager(appContext);
 
 

@@ -42,6 +42,7 @@ class LoginFragment : Fragment() {
     ): View? {
         val view: View = inflater!!.inflate(R.layout.login_fragment, container, false)
 
+        // get all the required buttons and fields
         loginButton = view.findViewById(R.id.buttonLogin)
         forgotPasswordButton = view.findViewById(R.id.buttonForgotPassword)
         signUpButton = view.findViewById(R.id.buttonSignUp)
@@ -52,6 +53,7 @@ class LoginFragment : Fragment() {
     }
 
     override fun onStart() {
+        // sets fragment based on option chose.
         auth = FirebaseAuth.getInstance();
 
         loginButton.setOnClickListener {
@@ -80,11 +82,13 @@ class LoginFragment : Fragment() {
         val password = passwordField.text.toString()
         Log.d(TAG, "Login Data: ${email}:${password}")
 
+        // check if email and password is empty if it is toast notification
         if(Util.checkFieldsIfEmpty(email, password)) {
             Util.popUp(applicationContext, "Please enter both username and password!!", Toast.LENGTH_LONG)
             return
         }
 
+        // signin functonality
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(
                 OnCompleteListener<AuthResult?> { task ->
