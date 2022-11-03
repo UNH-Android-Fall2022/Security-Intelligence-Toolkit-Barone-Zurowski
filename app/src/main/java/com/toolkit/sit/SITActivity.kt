@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.fragments.*
 import com.toolkit.sit.fragments.authenticated.*
 import com.toolkit.sit.util.Util
+import kotlin.math.log
 
 
 class SITActivity : AppCompatActivity() {
@@ -36,19 +37,20 @@ class SITActivity : AppCompatActivity() {
             bottomNavIconClicked(menuItem)
             true
         }
-
         topNavigationView.setOnMenuItemClickListener { menuItem: MenuItem ->
 
             if(menuItem.itemId == R.id.SettingsFragment) {
                 Log.d(TAG, "Settings")
                 setFrag(SettingsFragment())
             }
+            Log.d(TAG, menuItem.itemId.toString())
             true
         }
     }
 
     // handle bottom nav bar icon clicked
     private fun bottomNavIconClicked(menuItem: MenuItem) {
+        Log.d(TAG, menuItem.toString())
         when(menuItem.itemId) {
             R.id.HomeFragment -> {
                 Log.d(TAG, "Home")
