@@ -59,8 +59,16 @@ class ScanFragment : Fragment() {
             val subnet = editTextScanField.text.toString()
             // validation if data is entered
             if (!Util.checkFieldsIfEmpty(subnet) && subnet.isCIDR()) {
-                // 150 timeout is generally what non local subnet hosts are required to scan
-                runScanAndWrite(scanner, subnet, false, 150)
+
+                // Prevent running out of memory for too many addresses.
+                val cidrNumber = subnet.split("/")[1].toIntOrNull()
+
+                if (cidrNumber == null || cidrNumber < 16) {
+                    Util.popUp(appContext, "Please Enter CIDR Larger than 15.", Toast.LENGTH_LONG)
+                }  else {
+                    // 150 timeout is generally what non local subnet hosts are required to scan
+                    runScanAndWrite(scanner, subnet, false, 150)
+                }
             } else {
                 Util.popUp(appContext,"Please Enter Valid CIDR address", Toast.LENGTH_SHORT)
             }
