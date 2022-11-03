@@ -57,15 +57,20 @@ class ScanFragment : Fragment() {
         val scanner = NetScanner()
         remoteScanButton.setOnClickListener {
             val subnet = editTextScanField.text.toString()
+            // validation if data is entered
             if (!Util.checkFieldsIfEmpty(subnet) && subnet.isCIDR()) {
+                // 150 timeout is generally what non local subnet hosts are required to scan
                 runScanAndWrite(scanner, subnet, false, 150)
             } else {
                 Util.popUp(appContext,"Please Enter Valid CIDR address", Toast.LENGTH_SHORT)
             }
         }
 
+        // get the local CIDR notation so the user knows what the local scan will be
         buttonStartLocalScan.text = "Start Local Scan (${getLocalCIDR()})"
 
+
+        // automatically do local scan if clicked
         buttonStartLocalScan.setOnClickListener {
             val localCIDR = getLocalCIDR()
             runScanAndWrite(scanner, localCIDR, true, 20)
@@ -73,11 +78,13 @@ class ScanFragment : Fragment() {
     }
 
     private fun runScanAndWrite(scanner: NetScanner, subnet: String, isLocalScan: Boolean, timeout: Int) {
+        // create coroutine otherwise will block app
         GlobalScope.launch(Dispatchers.IO) {
-            val openAddresses = scanner.remoteScan(subnet, timeout)
+            val openAddresses = scanner.remoteScan(subnet, timeout) // this is where scan is done
             Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
 
             val db = Firebase.firestore
+            // add to the database using the network Model.
             db.collection("scans").add(
                 NetworkScanModel(
                     createdTime = Timestamp.now(),
@@ -92,18 +99,22 @@ class ScanFragment : Fragment() {
         }
     }
 
+    // this function gets the local CIDR
     private fun getLocalCIDR():String {
         val connectivityManager = appContext.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
 
+        // used to check if the user is connected to wifi
         val capabilties = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
             ?: return ""
 
+        // assure that the scan is done via WIFI
         if(!capabilties.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
             Log.i(TAG, "Wifi is not enabled")
             return ""
         }
         val linkProp =  connectivityManager.getLinkProperties(connectivityManager.activeNetwork)
 
+        // check route information from the network to determine the local subnet
         val correctIface = linkProp!!.routes.filter {
             it.`interface` == "wlan0"
                 && it.destination.toString().isCIDR()

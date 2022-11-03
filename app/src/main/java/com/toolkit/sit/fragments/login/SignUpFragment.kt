@@ -54,9 +54,11 @@ class SignUpFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance();
 
+        // go back to login page
         backButton.setOnClickListener {
             goBack()
         }
+        // sign up button
         signUpButton.setOnClickListener {
             val email = emailField.text.toString()
             val password = passField.text.toString()
@@ -71,6 +73,7 @@ class SignUpFragment : Fragment() {
         Util.mainFragment(activity, LoginFragment())
     }
 
+    // function used for validation and to sign up the user.
     private fun signUpUser(email: String, password: String, validatePass: String)  {
         Log.d(TAG, "Login Data: ${email}:${password}:${validatePass}")
 

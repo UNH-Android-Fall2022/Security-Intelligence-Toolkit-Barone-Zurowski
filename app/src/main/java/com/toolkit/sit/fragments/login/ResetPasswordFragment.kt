@@ -51,10 +51,12 @@ class ResetPasswordFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance();
 
+        // allows user to go back to login portal
         backButton.setOnClickListener {
             Util.mainFragment(activity, LoginFragment())
         }
 
+        // when the user clicks the forgot button with data
         forgotButton.setOnClickListener {
             val email = emailText.text.toString()
             if(!Util.checkFieldsIfEmpty(email)) {
@@ -66,6 +68,7 @@ class ResetPasswordFragment : Fragment() {
 
     }
 
+    // sends an email to the user to reset password
     private fun sendEmailReset(email: String) {
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener(OnCompleteListener<Void?> { task ->

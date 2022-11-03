@@ -39,6 +39,7 @@ class SettingsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        // used to allow the user to log out in the settings.
         logoutButton.setOnClickListener {
             FirebaseAuth.getInstance().signOut();
             val intent = Intent(appContext, MainActivity::class.java)

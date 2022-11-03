@@ -69,6 +69,7 @@ class SITActivity : AppCompatActivity() {
         }
     }
 
+    // Function used to set fragment container to specific fragment.
     private fun setFrag(fragment: Fragment) {
         Util.setFragment(supportFragmentManager, R.id.fragment_container_view,fragment)
     }
