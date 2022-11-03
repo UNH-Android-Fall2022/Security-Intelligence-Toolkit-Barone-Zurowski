@@ -33,7 +33,6 @@ class ScanAdapter(options: FirestoreRecyclerOptions<NetworkScanModel>, private v
             holder.createdStamp.text = "Date: ${model.createdTime.toDate()}"
             holder.cidrView.text = "Scan: ${model.attemptedScan}"
 //            holder.results.text = "Results: ${model.results}"
-            holder.results.text = ""
         } else {
             // TODO: SHODAN data
         }
