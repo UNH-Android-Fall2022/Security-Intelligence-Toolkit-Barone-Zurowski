@@ -8,8 +8,27 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:gravity="center_horizontal|top"
         android:text="@string/home"
         android:textSize="60sp" />
+
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="120sp"
+        android:text="Hello, Welcome to SIT!"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="-40sp"
+        android:text="SIT enables network intelligence for everyone. It provides you with the ability to perform real-time network interrogation on your local and remote networks. The discovery of systems on networks are saved to a database and can be viewed at any time by selecting the history button below. Additional features include integration with Shodan, a search engine for discovering unsecured Internet of Things (IoT) devices."
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </FrameLayout>
