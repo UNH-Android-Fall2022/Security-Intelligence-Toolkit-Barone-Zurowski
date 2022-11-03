@@ -33,6 +33,13 @@
         android:textSize="24dp"
         android:textStyle="bold" />
 
+
+    <Button
+        android:id="@+id/more_info_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="3dp"
