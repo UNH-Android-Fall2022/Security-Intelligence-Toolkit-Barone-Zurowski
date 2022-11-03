@@ -64,7 +64,7 @@ class SITActivity : AppCompatActivity() {
             }
             R.id.HistoryFragment -> {
                 Log.d(TAG, "History")
-                setFrag(HistoryFragment())
+                setFrag(HistoryFragment(supportFragmentManager))
             }
         }
     }

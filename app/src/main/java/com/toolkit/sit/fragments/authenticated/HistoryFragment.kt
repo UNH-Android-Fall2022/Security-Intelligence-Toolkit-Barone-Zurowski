@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -27,7 +28,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HistoryFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HistoryFragment : Fragment() {
+class HistoryFragment(private val fragManager: FragmentManager) : Fragment() {
 
     private lateinit var recycleViewNetworkScan: RecyclerView
     private lateinit var scanAdapter: ScanAdapter
@@ -35,10 +36,6 @@ class HistoryFragment : Fragment() {
     lateinit var appContext: Context
 
     private var TAG = "HISTORY_FRAGMENT"
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +57,7 @@ class HistoryFragment : Fragment() {
             .build()
 
 
-        scanAdapter = ScanAdapter(options )
+        scanAdapter = ScanAdapter(options, fragManager)
         Log.d(TAG, scanAdapter.itemCount.toString())
         recycleViewNetworkScan.adapter = scanAdapter
 
