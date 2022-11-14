@@ -3,6 +3,7 @@ package com.toolkit.sit.shodan
 
 import com.google.gson.annotations.SerializedName;
 
+// Data class for when user queries the Shodan API to check their HTTP Headers.
 data class ShodanHTTPHeaders(
     @SerializedName("Content-Length") val length: String,
     @SerializedName("Cf-Visitor") val visitor: String,

@@ -13,15 +13,18 @@ class ShodanRetrofitClient {
         @Synchronized
         fun getInstance(): ShodanAPI {
             if(shodanAPI == null) {
+                // add the interceptor to dynamically add API Key to EACH REQUEST
                 val client = OkHttpClient.Builder()
                     .addInterceptor(ShodanInterceptor())
                     .build()
+
 
                 val retrofit = Retrofit.Builder().baseUrl(shodanURL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()
 
+                // Creates interface to interact with API
                 shodanAPI = retrofit.create(ShodanAPI::class.java)
 
             }

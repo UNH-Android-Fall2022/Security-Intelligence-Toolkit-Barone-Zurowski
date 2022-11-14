@@ -2,6 +2,7 @@ package com.toolkit.sit.shodan
 
 import com.google.gson.annotations.SerializedName
 
+// This data class is used to store information from the Shodan API
 data class ShodanAPIInformation(
     @SerializedName("scan_credits") val scanCredits: Int,
     @SerializedName("usage_limits") val usageLimits: ShodanAPIUsageLimits,
