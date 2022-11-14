@@ -16,6 +16,12 @@ object Util {
         (activity as MainActivity?)?.setFragment(fragment)
     }
 
+    var shodanAPIKey: String = ""
+
+    fun setShodanKey(apiKey: String) {
+        shodanAPIKey = apiKey
+    }
+
     // Function for validating if fields are entered in.
     fun checkFieldsIfEmpty(vararg fieldStr: String): Boolean {
         for (field in fieldStr) {
