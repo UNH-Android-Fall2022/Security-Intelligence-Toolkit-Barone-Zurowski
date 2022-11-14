@@ -2,6 +2,7 @@ package com.toolkit.sit.shodan
 
 import com.google.gson.annotations.SerializedName
 
+// Used for store IP Search queries (e.g. 8.8.8.8)
 data class ShodanIPSearch(
     @SerializedName("ip_str") val IPStr: String,
     @SerializedName("region_code") val regionCode: String?,
