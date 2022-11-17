@@ -18,6 +18,15 @@
     <string name="history">History</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <string-array name="shodan_array">
+        <item>My Public IP</item>
+        <item>Show Filters</item>
+        <item>API Information</item>
+        <item>Popular Tags</item>
+        <item>Search IP</item>
+    </string-array>
+
+
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
