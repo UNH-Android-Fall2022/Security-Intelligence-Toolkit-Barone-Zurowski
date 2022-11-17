@@ -5,11 +5,33 @@
     android:layout_height="match_parent"
     tools:context="com.toolkit.sit.fragments.authenticated.ShodanFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/shodan"
-        android:textSize="60sp" />
+    <Spinner
+
+        android:id="@+id/shodan_spinner"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="40sp"
+        android:contentDescription="Select Option"
+        android:minHeight="48dp" />
+
+
+    <EditText
+        android:id="@+id/queryShodan"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="150sp"
+        android:ems="10"
+        android:hint="Query String"
+        android:inputType="text" />
+    <Button
+        android:id="@+id/shodanButton"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="-200sp"
+        android:text="Run Shodan" />
+
 
 </FrameLayout>
