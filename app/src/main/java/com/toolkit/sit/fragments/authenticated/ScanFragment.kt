@@ -1,5 +1,6 @@
 package com.toolkit.sit.fragments.authenticated
 
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.net.ConnectivityManager
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +25,8 @@ import com.toolkit.sit.scanner.NetScanner
 import com.toolkit.sit.util.Util
 import com.toolkit.sit.util.Util.isCIDR
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -37,6 +41,8 @@ class ScanFragment : Fragment() {
     private lateinit var editTextScanField: EditText
     private lateinit var appContext: Context
     private var TAG = "SCAN_FRAGMENT"
+
+    private val CHANNEL_ID = "com.toolkit.sit.channel_1"
 
 
     override fun onCreateView(
@@ -102,6 +108,21 @@ class ScanFragment : Fragment() {
                     uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
                 )
             )
+
+            val now = Date()
+            val id: Int = SimpleDateFormat("ddHHmmss", Locale.US).format(now).toInt()
+
+            var builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.sit_logo)
+                .setContentTitle("Scan Complete")
+                .setContentText("Open SIT to view your scan results for " + subnet)
+                .setStyle(NotificationCompat.BigTextStyle()
+                    .bigText("Open SIT to view your scan results for " + subnet))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+
+            val mNotificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            mNotificationManager.notify(id, builder.build())
 
             Log.d(TAG, "Open hosts $openAddresses")
         }

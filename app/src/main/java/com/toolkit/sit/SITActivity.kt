@@ -1,5 +1,9 @@
 package com.toolkit.sit
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -19,6 +23,9 @@ class SITActivity : AppCompatActivity() {
     private var TAG = "_SitActivity"
     private lateinit var bottomNavigationView : BottomNavigationView
     private lateinit var topNavigationView : MaterialToolbar
+
+    private val CHANNEL_ID = "com.toolkit.sit.channel_1"
+
 //    private var database: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +36,8 @@ class SITActivity : AppCompatActivity() {
         Log.i(TAG, "User is logged in: $email")
 
         setContentView(R.layout.app_layout)
+
+        createNotificationChannel()
 
         topNavigationView = findViewById(R.id.topAppBar)
         bottomNavigationView = findViewById(R.id.bottom_nav)
@@ -76,4 +85,20 @@ class SITActivity : AppCompatActivity() {
         Util.setFragment(supportFragmentManager, R.id.fragment_container_view,fragment)
     }
 
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "SIT Notifications"
+            val descriptionText = "SIT Notifications"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 }
