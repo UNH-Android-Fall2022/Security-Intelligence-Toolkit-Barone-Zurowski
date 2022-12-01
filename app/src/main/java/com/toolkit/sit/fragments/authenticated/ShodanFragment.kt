@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.toolkit.sit.R
@@ -17,6 +18,7 @@ import com.toolkit.sit.models.NetworkScanModel
 import com.toolkit.sit.shodan.ShodanAPI
 import com.toolkit.sit.shodan.ShodanRetrofitClient
 import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.setShodanKey
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -39,6 +41,21 @@ class ShodanFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val reference = FirebaseFirestore.getInstance()
+            .collection("settings")
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid.toString())
+
+        reference.get().addOnSuccessListener { document ->
+            if (document != null) {
+                var data = document.documents.first().data as Map<*, *>;
+                Log.d(TAG, "OBJ: ${data.get("shodanKey")}")
+
+                setShodanKey(data.get("shodanKey").toString())
+            }
+        }
+
+
         val view: View = inflater.inflate(R.layout.fragment_shodan, container, false)
 
         shodanButton = view.findViewById(R.id.shodanButton)
