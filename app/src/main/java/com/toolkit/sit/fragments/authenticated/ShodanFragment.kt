@@ -56,8 +56,6 @@ class ShodanFragment : Fragment() {
             R.layout.spinner_layout, shodanOptions)
         shodanSpinner.adapter = adapter
 
-        Util.setShodanKey("hFEldaF51xbka9OUYUEkvuKXLdUuKEs0")
-
         shodanButton.setOnClickListener {
             Log.d(TAG, "Clicked button.")
             val selected = shodanSpinner.selectedItem.toString()
