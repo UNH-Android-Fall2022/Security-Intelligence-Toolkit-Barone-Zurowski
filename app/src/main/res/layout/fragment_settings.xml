@@ -8,9 +8,28 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="400sp"
         android:gravity="center"
         android:text="@string/settings"
         android:textSize="60sp" />
+
+    <EditText
+        android:id="@+id/apiKeySet"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100sp"
+        android:ems="10"
+        android:hint="Set Shodan API Key"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/change_api_key"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_marginTop="75dp"
+        android:text="Set API Key" />
 
     <Button
         android:id="@+id/button_log_out"
