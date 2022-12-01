@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class NetworkScanModel(
     val createdTime: Timestamp = Timestamp.now(),
     val uid: String = "",
-
+    val scanType: String = "",
     val results:  List<MutableMap<String, List<Int>>>? = mutableListOf(
         hashMapOf("" to listOf())
     ),

@@ -34,10 +34,39 @@ class ScanDetailsFragment(private val scanData: NetworkScanModel) : Fragment(){
 
     override fun onStart() {
         super.onStart()
+
+        when(scanData.scanType) {
+            "SHODAN_PUBLIC_IP" -> {
+                subnetTextView.text = "Shodan My Public IP"
+                dateTextView.text = "Date: ${scanData.createdTime.toDate()}"
+                resultsTextView.text = "Public IP: ${scanData.attemptedScan}"
+            }
+            "SHODAN_SEARCH_IP" -> {
+                subnetTextView.text = "Shodan IP Search"
+                dateTextView.text = "Date: ${scanData.createdTime.toDate()}"
+                resultsTextView.text = "Location: ${scanData.attemptedScan}"
+
+                if(scanData.results?.isNotEmpty() == true) {
+                    val firstKey = scanData.results[0].keys.first()
+                    resultsTextView.text = resultsTextView.text.toString() +
+                            "\n IP: ${firstKey}" +
+                            "\n Ports: ${scanData.results[0][firstKey]?.joinToString(",")}"
+
+                }
+            }
+            "SHODAN_FILTER_SEARCH" -> {
+                val firstKey = scanData.results?.get(0)?.keys?.first()
+                subnetTextView.text = "Filter String: ${scanData.attemptedScan}"
+                dateTextView.text = "Date: ${scanData.createdTime.toDate()}"
+                resultsTextView.text = firstKey
+            }
+            else -> {
+                subnetTextView.text = "Subnet: ${scanData.attemptedScan}"
+                dateTextView.text = "Date: ${scanData.createdTime.toDate()}"
+                resultsTextView.text = "Results: ${scanData.results}"
+            }
+        }
         Log.d(TAG, "Data: $scanData")
-        subnetTextView.text = "Subnet: ${scanData.attemptedScan}"
-        dateTextView.text = "Date: ${scanData.createdTime.toDate()}"
-        resultsTextView.text = "Results: ${scanData.results}"
 
     }
 }
