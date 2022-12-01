@@ -12,6 +12,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.getField
 import com.google.firebase.ktx.Firebase
 import com.toolkit.sit.R
 import com.toolkit.sit.models.NetworkScanModel
@@ -19,7 +20,9 @@ import com.toolkit.sit.shodan.ShodanAPI
 import com.toolkit.sit.shodan.ShodanRetrofitClient
 import com.toolkit.sit.util.Util
 import com.toolkit.sit.util.Util.setShodanKey
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -35,26 +38,13 @@ class ShodanFragment : Fragment() {
     private lateinit var appContext: Context
     private lateinit var shodanOptions: Array<String>
     private lateinit var queryShodan: EditText
+    private var shodanSet: Boolean = false
     private var TAG = "SHODAN_FRAGMENT"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        val reference = FirebaseFirestore.getInstance()
-            .collection("settings")
-            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid.toString())
-
-        reference.get().addOnSuccessListener { document ->
-            if (document != null) {
-                var data = document.documents.first().data as Map<*, *>;
-                Log.d(TAG, "OBJ: ${data.get("shodanKey")}")
-
-                setShodanKey(data.get("shodanKey").toString())
-            }
-        }
-
 
         val view: View = inflater.inflate(R.layout.fragment_shodan, container, false)
 
@@ -64,6 +54,25 @@ class ShodanFragment : Fragment() {
 
         appContext = view.context.applicationContext
         shodanOptions = appContext.resources.getStringArray(R.array.shodan_array)
+
+        val reference = FirebaseFirestore.getInstance()
+            .collection("settings").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).get()
+
+
+        reference.addOnSuccessListener {
+            val key = it.getField<String>("shodanKey")
+            Log.d(TAG, "$key")
+            shodanSet = if (key.isNullOrEmpty()) {
+                false
+            } else {
+                setShodanKey(key)
+                true
+            }
+
+            if(!shodanSet)
+                Util.popUp(appContext, "Shodan Key Needs to be Set, its currently not active", Toast.LENGTH_LONG)
+        }
+
         return view
     }
 
@@ -72,6 +81,25 @@ class ShodanFragment : Fragment() {
         val adapter = ArrayAdapter(appContext,
             R.layout.spinner_layout, shodanOptions)
         shodanSpinner.adapter = adapter
+
+
+        // check if valid API key.
+
+        GlobalScope.launch {
+            val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
+
+            try {
+                shodanAPI.getAPIInfo()
+            } catch (e: retrofit2.HttpException) {
+                shodanSet = false
+                Log.d(TAG, "Invalid API Key")
+            }
+
+            // FIGURE OUT Later.
+//            if (!shodanSet) {
+//                Util.popUp(appContext, "Your API Key is Invalid.", Toast.LENGTH_LONG)
+//            }
+        }
 
         shodanButton.setOnClickListener {
             Log.d(TAG, "Clicked button.")
@@ -104,6 +132,8 @@ class ShodanFragment : Fragment() {
     }
 
     private fun searchFilter(filter: String) {
+
+        if (!shodanSet) return
         GlobalScope.launch {
             val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
             val data = shodanAPI.search(filter)
@@ -142,6 +172,7 @@ class ShodanFragment : Fragment() {
         }
     }
     private fun searchIP(ip: String) {
+        if (!shodanSet) return
         GlobalScope.launch {
             val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
 
@@ -170,7 +201,7 @@ class ShodanFragment : Fragment() {
         }
     }
     private fun getPublicIP(): String {
-
+        if (!shodanSet) return ""
         var ip = "ERROR"
         GlobalScope.launch {
             val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
