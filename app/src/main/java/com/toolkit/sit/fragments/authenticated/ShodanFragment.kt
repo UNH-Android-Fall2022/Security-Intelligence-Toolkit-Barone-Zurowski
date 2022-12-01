@@ -7,19 +7,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import com.google.firebase.Timestamp
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.toolkit.sit.R
-import com.toolkit.sit.models.NetworkScanModel
 import com.toolkit.sit.shodan.ShodanAPI
 import com.toolkit.sit.shodan.ShodanRetrofitClient
 import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.setShodanKey
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
 
 /**
  * A simple [Fragment] subclass.
@@ -33,12 +34,26 @@ class ShodanFragment : Fragment() {
     private lateinit var appContext: Context
     private lateinit var shodanOptions: Array<String>
     private lateinit var queryShodan: EditText
+
     private var TAG = "SHODAN_FRAGMENT"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val reference = FirebaseFirestore.getInstance()
+            .collection("settings")
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid.toString())
+
+        reference.get().addOnSuccessListener { document ->
+            if (document != null) {
+                var data = document.documents.first().data as Map<*, *>;
+                Log.d(TAG, "OBJ: ${data.get("shodanKey")}")
+
+                setShodanKey(data.get("shodanKey").toString())
+            }
+        }
+
         val view: View = inflater.inflate(R.layout.fragment_shodan, container, false)
 
         shodanButton = view.findViewById(R.id.shodanButton)
@@ -69,61 +84,13 @@ class ShodanFragment : Fragment() {
                     if(!Util.checkFieldsIfEmpty(ip)) {
                         Log.d(TAG, "IP Searching: $ip")
                         searchIP(ip)
-                    } else {
-                        Util.popUp(appContext, "Please Enter a Value to search IP", Toast.LENGTH_LONG)
                     }
                 }
-                "Search Filter (e.g. webcam)" -> {
-                    val query = queryShodan.text.toString()
-                    if(!Util.checkFieldsIfEmpty(query)) {
-                        Log.d(TAG, "Search filter: $query")
-                        searchFilter(query)
-                    } else {
-                        Util.popUp(appContext, "Please Enter a Value to search Filter", Toast.LENGTH_LONG)
-                    }
-                }
+
+
             }
         }
 
-    }
-
-    private fun searchFilter(filter: String) {
-        GlobalScope.launch {
-            val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
-            val data = shodanAPI.search(filter)
-
-            if(data.matches.isNotEmpty()) {
-                val match = data.matches.last()
-                var data = "Title: ${match.title}"
-
-                if(match.query?.isNotEmpty() == true) {
-                    data += "\nQuery Found: ${match.query}"
-                }
-                if (match.description?.isNotEmpty() == true) {
-                    data += "\nDescription: ${match.description}"
-                }
-
-
-                val model = NetworkScanModel(
-                    createdTime = Timestamp.now(),
-                    uid = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                    scanType = "SHODAN_FILTER_SEARCH",
-                    results = mutableListOf(
-                        hashMapOf(data to listOf())
-                    ),
-                    attemptedScan = filter,
-                    isLocalScan = false,
-                    isNetworkScan = false
-                )
-                //
-                val db = Firebase.firestore
-                db.collection("scans").add(model)
-            }
-
-
-
-            Log.d(TAG, "Shodan Search: $data")
-        }
     }
     private fun searchIP(ip: String) {
         GlobalScope.launch {
@@ -131,57 +98,17 @@ class ShodanFragment : Fragment() {
 
             val data = shodanAPI.searchIP(ip)
 
-            val openPortsMap: MutableMap<String, List<Int>> = HashMap()
-
-            openPortsMap[ip] = data.ports as MutableList<Int>
-            val info = "${data.city}, ${data.regionCode}, ${data.countryName}, ${data.org}"
-            val model = NetworkScanModel(
-                createdTime = Timestamp.now(),
-                uid = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                scanType = "SHODAN_SEARCH_IP",
-                results = mutableListOf(
-                    openPortsMap
-                ),
-                attemptedScan = info,
-                isLocalScan = false,
-                isNetworkScan = false
-            )
-            //
-            val db = Firebase.firestore
-            db.collection("scans").add(model)
-
-            Log.d(TAG, "Search Address: $model")
+            Log.d(TAG, "My Public Address: $data")
         }
     }
-    private fun getPublicIP(): String {
-
-        var ip = "ERROR"
+    private fun getPublicIP() {
         GlobalScope.launch {
             val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
 
-            ip = shodanAPI.getPublicIPv4Addr()
-
-            val db = Firebase.firestore
+            val ip = shodanAPI.getPublicIPv4Addr()
 
             Log.d(TAG, "My Public Address: $ip")
-
-            val model = NetworkScanModel(
-                createdTime = Timestamp.now(),
-                uid = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                scanType = "SHODAN_PUBLIC_IP",
-                results = mutableListOf(
-                        hashMapOf("SHODAN_PUBLIC_SCAN" to listOf())
-                ),
-                attemptedScan = ip,
-                isLocalScan = false,
-                isNetworkScan = false
-            )
-            // add to the database using the network Model.
-            Log.d(TAG, model.toString())
-            db.collection("scans").add(model)
         }
-
-        return ip
     }
 
 }
