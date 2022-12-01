@@ -28,25 +28,28 @@ class ScanAdapter(options: FirestoreRecyclerOptions<NetworkScanModel>, private v
         Log.d(TAG, model::class.java.typeName.toString())
         Log.d(TAG, "View binded: $model")
 
+
+        holder.createdStamp.text = "Date: ${model.createdTime.toDate()}"
         // check if shodan or not
         if (model.isNetworkScan) {
-            holder.createdStamp.text = "Date: ${model.createdTime.toDate()}"
             holder.cidrView.text = "Scan: ${model.attemptedScan}"
-//            holder.results.text = "Results: ${model.results}"
         } else {
-            // TODO: SHODAN data
+            when(model.scanType) {
+                "SHODAN_FILTER_SEARCH" -> {
+                    val info = model.attemptedScan?.split("\n")?.get(0)
+                    holder.cidrView.text = "Shodan Filter Scan: ${info}"
+                }
+                else -> {
+                    holder.cidrView.text = "Shodan Scan: ${model.attemptedScan}"
+                }
+            }
         }
 
         // each item should have a click listener that if clicked
         // will show more detailed information about the scan/shodan
         holder.button.setOnClickListener {
             Log.d(TAG, model.toString())
-            if (model.isNetworkScan) {
-                // eventually have but
-                Util.setFragment(supportFragmentManager, R.id.fragment_container_view, ScanDetailsFragment(model))
-            } else {
-                // TODO: Shodan style result
-            }
+            Util.setFragment(supportFragmentManager, R.id.fragment_container_view, ScanDetailsFragment(model))
         }
 
     }

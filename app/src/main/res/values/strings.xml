@@ -20,9 +20,7 @@
 
     <string-array name="shodan_array">
         <item>My Public IP</item>
-        <item>Show Filters</item>
-        <item>API Information</item>
-        <item>Popular Tags</item>
+        <item>Search Filter (e.g. webcam)</item>
         <item>Search IP</item>
     </string-array>
 
