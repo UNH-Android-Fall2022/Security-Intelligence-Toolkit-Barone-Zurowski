@@ -11,13 +11,16 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.toolkit.sit.R
 import com.toolkit.sit.shodan.ShodanAPI
 import com.toolkit.sit.shodan.ShodanRetrofitClient
 import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.setShodanKey
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
 
 /**
  * A simple [Fragment] subclass.
@@ -31,12 +34,26 @@ class ShodanFragment : Fragment() {
     private lateinit var appContext: Context
     private lateinit var shodanOptions: Array<String>
     private lateinit var queryShodan: EditText
+
     private var TAG = "SHODAN_FRAGMENT"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val reference = FirebaseFirestore.getInstance()
+            .collection("settings")
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid.toString())
+
+        reference.get().addOnSuccessListener { document ->
+            if (document != null) {
+                var data = document.documents.first().data as Map<*, *>;
+                Log.d(TAG, "OBJ: ${data.get("shodanKey")}")
+
+                setShodanKey(data.get("shodanKey").toString())
+            }
+        }
+
         val view: View = inflater.inflate(R.layout.fragment_shodan, container, false)
 
         shodanButton = view.findViewById(R.id.shodanButton)
