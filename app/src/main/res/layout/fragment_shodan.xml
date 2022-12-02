@@ -20,6 +20,9 @@
         android:layout_gravity="center"
         android:layout_marginBottom="40sp"
         android:contentDescription="Select Option"
+        android:spinnerMode="dropdown"
+        android:background="@drawable/purple_outline"
+        android:popupBackground="@drawable/purple_outline_black_background"
         android:minHeight="48dp" />
 
 
@@ -31,7 +34,8 @@
         android:layout_marginBottom="150sp"
         android:ems="10"
         android:hint="Query String"
-        android:inputType="text" />
+        android:inputType="text"
+        android:minHeight="48dp" />
     <Button
         android:id="@+id/shodanButton"
         android:layout_width="350dp"
