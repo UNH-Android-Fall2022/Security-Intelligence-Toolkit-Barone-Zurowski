@@ -3,11 +3,11 @@ package com.toolkit.sit.fragments.authenticated
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -72,6 +72,21 @@ class ShodanFragment : Fragment() {
 
             if(!shodanSet)
                 Util.popUp(appContext, "ERROR: Shodan Key Not Set!!", Toast.LENGTH_LONG)
+        }
+
+        //Initial dropdown value is My public ip so default query to hidden
+        queryShodan.visibility = View.INVISIBLE
+
+        shodanSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position == 0) {
+                    queryShodan.visibility = View.INVISIBLE
+                    queryShodan.setText("")
+                } else {
+                    queryShodan.visibility = View.VISIBLE
+                }
+            }
         }
 
         return view
