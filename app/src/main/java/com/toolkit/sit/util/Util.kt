@@ -1,12 +1,16 @@
 package com.toolkit.sit.util
 
+import android.app.Activity
+import android.content.Context
 import android.text.TextUtils
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import android.content.Context
 import com.toolkit.sit.MainActivity
+
 
 object Util {
     @JvmStatic
@@ -49,4 +53,11 @@ object Util {
 
     fun String.isIPv4(): Boolean =
         this.matches(Regex("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})"))
+
+    fun Activity.hideSoftKeyboard() {
+        currentFocus?.let {
+            val inputMethodManager = ContextCompat.getSystemService(this, InputMethodManager::class.java)!!
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }
 }

@@ -20,9 +20,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.toolkit.sit.R
+import com.toolkit.sit.SITActivity
 import com.toolkit.sit.models.NetworkScanModel
 import com.toolkit.sit.scanner.NetScanner
 import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.hideSoftKeyboard
 import com.toolkit.sit.util.Util.isCIDR
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
@@ -62,6 +64,8 @@ class ScanFragment : Fragment() {
         super.onStart()
         val scanner = NetScanner()
         remoteScanButton.setOnClickListener {
+            (activity as SITActivity).hideSoftKeyboard()
+
             val subnet = editTextScanField.text.toString()
             // validation if data is entered
             if (!Util.checkFieldsIfEmpty(subnet) && subnet.isCIDR()) {
@@ -86,6 +90,7 @@ class ScanFragment : Fragment() {
 
         // automatically do local scan if clicked
         buttonStartLocalScan.setOnClickListener {
+            (activity as SITActivity).hideSoftKeyboard()
             val localCIDR = getLocalCIDR()
             runScanAndWrite(scanner, localCIDR, true, 20)
         }

@@ -16,7 +16,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.getField
 import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
+import com.toolkit.sit.SITActivity
 import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.hideSoftKeyboard
 
 
 /**
@@ -59,6 +61,8 @@ class SettingsFragment : Fragment() {
         super.onStart()
 
         apiKeyButton.setOnClickListener {
+            (activity as SITActivity).hideSoftKeyboard()
+
             val shodanAPIKey = apiKeyEditText.text.toString()
             if(!Util.checkFieldsIfEmpty(shodanAPIKey)) {
                 val uuid = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -75,6 +79,8 @@ class SettingsFragment : Fragment() {
         }
         // used to allow the user to log out in the settings.
         logoutButton.setOnClickListener {
+            (activity as SITActivity).hideSoftKeyboard()
+
             FirebaseAuth.getInstance().signOut();
             val intent = Intent(appContext, MainActivity::class.java)
             startActivity(intent)

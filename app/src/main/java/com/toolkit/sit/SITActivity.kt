@@ -7,6 +7,9 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.*
 import com.google.android.material.appbar.MaterialToolbar
@@ -15,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.fragments.*
 import com.toolkit.sit.fragments.authenticated.*
 import com.toolkit.sit.util.Util
-import kotlin.math.log
+import com.toolkit.sit.util.Util.hideSoftKeyboard
 
 
 class SITActivity : AppCompatActivity() {
@@ -36,6 +39,7 @@ class SITActivity : AppCompatActivity() {
         Log.i(TAG, "User is logged in: $email")
 
         setContentView(R.layout.app_layout)
+        setupKbdListener(findViewById(R.id.sit_parent))
 
         createNotificationChannel()
 
@@ -54,6 +58,24 @@ class SITActivity : AppCompatActivity() {
             }
             Log.d(TAG, menuItem.itemId.toString())
             true
+        }
+    }
+
+    private fun setupKbdListener(view: View) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                this.hideSoftKeyboard()
+                false
+            }
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupKbdListener(innerView)
+            }
         }
     }
 

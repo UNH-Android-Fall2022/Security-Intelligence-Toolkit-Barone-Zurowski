@@ -15,10 +15,12 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.getField
 import com.google.firebase.ktx.Firebase
 import com.toolkit.sit.R
+import com.toolkit.sit.SITActivity
 import com.toolkit.sit.models.NetworkScanModel
 import com.toolkit.sit.shodan.ShodanAPI
 import com.toolkit.sit.shodan.ShodanRetrofitClient
 import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.hideSoftKeyboard
 import com.toolkit.sit.util.Util.isIPv4
 import com.toolkit.sit.util.Util.setShodanKey
 import kotlinx.coroutines.*
@@ -111,7 +113,18 @@ class ShodanFragment : Fragment() {
             }
         }
 
+        shodanSpinner.setOnTouchListener { view, motionEvent ->
+            (activity as SITActivity).hideSoftKeyboard()
+            false
+        }
+        shodanSpinner.setOnKeyListener { view, i, keyEvent ->
+            (activity as SITActivity).hideSoftKeyboard()
+            false
+        }
+
         shodanButton.setOnClickListener {
+            (activity as SITActivity).hideSoftKeyboard()
+
             Log.d(TAG, "Clicked button.")
             if(shodanAPIKeyPulled) {
                 if (shodanSet) {
