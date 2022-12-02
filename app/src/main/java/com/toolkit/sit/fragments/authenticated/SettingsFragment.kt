@@ -3,6 +3,7 @@ package com.toolkit.sit.fragments.authenticated
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.getField
 import com.toolkit.sit.MainActivity
 import com.toolkit.sit.R
 import com.toolkit.sit.util.Util
@@ -39,6 +41,16 @@ class SettingsFragment : Fragment() {
         apiKeyEditText = view.findViewById(R.id.apiKeySet)
         logoutButton = view.findViewById(R.id.button_log_out)
         appContext = view.context
+
+        val reference = FirebaseFirestore.getInstance()
+            .collection("settings").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).get()
+
+        reference.addOnSuccessListener {
+            val key = it.getField<String>("shodanKey")
+            if (!key.isNullOrEmpty()) {
+                apiKeyEditText.setText(key)
+            }
+        }
 
         return view
     }
