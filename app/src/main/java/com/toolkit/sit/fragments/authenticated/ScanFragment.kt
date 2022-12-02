@@ -94,7 +94,7 @@ class ScanFragment : Fragment() {
     private fun runScanAndWrite(scanner: NetScanner, subnet: String, isLocalScan: Boolean, timeout: Int) {
         // create coroutine otherwise will block app
         GlobalScope.launch(Dispatchers.IO) {
-            val openAddresses = scanner.remoteScan(subnet, timeout) // this is where scan is done
+            val openAddresses = scanner.remoteScan(subnet, timeout, appContext) // this is where scan is done
             Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
 
             val db = Firebase.firestore
@@ -112,7 +112,7 @@ class ScanFragment : Fragment() {
             val now = Date()
             val id: Int = SimpleDateFormat("ddHHmmss", Locale.US).format(now).toInt()
 
-            var builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+            var builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.sit_logo)
                 .setContentTitle("Scan Complete")
                 .setContentText("Open SIT to view your scan results for " + subnet)
@@ -121,7 +121,7 @@ class ScanFragment : Fragment() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
 
-            val mNotificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val mNotificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             mNotificationManager.notify(id, builder.build())
 
             Log.d(TAG, "Open hosts $openAddresses")

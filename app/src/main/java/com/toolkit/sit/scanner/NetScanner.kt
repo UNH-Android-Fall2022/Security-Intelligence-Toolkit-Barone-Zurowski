@@ -1,8 +1,12 @@
 package com.toolkit.sit.scanner
 
+import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.toolkit.sit.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -13,7 +17,10 @@ import java.net.*
 
 class NetScanner {
     private var TAG = "NET_SCANNER"
-    suspend fun remoteScan(cidr: String, timeout: Int): List<MutableMap<String, List<Int>>> {
+    suspend fun remoteScan(cidr: String, timeout: Int, appContext: Context): List<MutableMap<String, List<Int>>> {
+        withContext(Dispatchers.Main) {
+            Util.popUp(appContext, "Started Network Scan on $cidr", Toast.LENGTH_SHORT)
+        }
 
         // check if /32 create list of only one IP.
         val ips: List<InetAddress> = if(cidr.split("/")[1] == "32") {
