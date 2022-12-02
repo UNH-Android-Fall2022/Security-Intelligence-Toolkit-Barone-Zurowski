@@ -94,7 +94,22 @@ class ScanFragment : Fragment() {
     private fun runScanAndWrite(scanner: NetScanner, subnet: String, isLocalScan: Boolean, timeout: Int) {
         // create coroutine otherwise will block app
         GlobalScope.launch(Dispatchers.IO) {
-            val openAddresses = scanner.remoteScan(subnet, timeout, appContext) // this is where scan is done
+            val now = Date()
+            val notificationId: Int = SimpleDateFormat("ddHHmmss", Locale.US).format(now).toInt()
+
+            var builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                .setSmallIcon(R.drawable.sit_logo)
+                .setContentTitle("Network Scan")
+                .setContentText("Scan in progress for " + subnet)
+                .setStyle(NotificationCompat.BigTextStyle()
+                    .bigText("Scan in progress for " + subnet))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setProgress(100, 0, false)
+
+            val mNotificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            mNotificationManager.notify(notificationId, builder.build())
+
+            val openAddresses = scanner.remoteScan(subnet, timeout, appContext, builder, notificationId) // this is where scan is done
             Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
 
             val db = Firebase.firestore
@@ -109,20 +124,13 @@ class ScanFragment : Fragment() {
                 )
             )
 
-            val now = Date()
-            val id: Int = SimpleDateFormat("ddHHmmss", Locale.US).format(now).toInt()
-
-            var builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
-                .setSmallIcon(R.drawable.sit_logo)
-                .setContentTitle("Scan Complete")
-                .setContentText("Open SIT to view your scan results for " + subnet)
-                .setStyle(NotificationCompat.BigTextStyle()
-                    .bigText("Open SIT to view your scan results for " + subnet))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true)
-
-            val mNotificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            mNotificationManager.notify(id, builder.build())
+            builder.setContentTitle("Network Scan - Complete")
+                    .setContentText("Open SIT to view your scan results for " + subnet)
+                    .setStyle(NotificationCompat.BigTextStyle()
+                        .bigText("Open SIT to view your scan results for " + subnet))
+                    .setAutoCancel(true)
+                    .setProgress(100, 100, false)
+            mNotificationManager.notify(notificationId, builder.build())
 
             Log.d(TAG, "Open hosts $openAddresses")
         }

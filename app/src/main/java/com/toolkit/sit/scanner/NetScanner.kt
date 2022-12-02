@@ -1,11 +1,10 @@
 package com.toolkit.sit.scanner
 
+import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
-import android.os.StrictMode
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.app.NotificationCompat
 import com.toolkit.sit.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +16,7 @@ import java.net.*
 
 class NetScanner {
     private var TAG = "NET_SCANNER"
-    suspend fun remoteScan(cidr: String, timeout: Int, appContext: Context): List<MutableMap<String, List<Int>>> {
+    suspend fun remoteScan(cidr: String, timeout: Int, appContext: Context, builder: NotificationCompat.Builder, notificationId: Int): List<MutableMap<String, List<Int>>> {
         withContext(Dispatchers.Main) {
             Util.popUp(appContext, "Started Network Scan on $cidr", Toast.LENGTH_SHORT)
         }
@@ -36,7 +35,12 @@ class NetScanner {
         // current ports that it will attempt to connec tto.
         val ports = listOf(80, 443)
 
-        ips.forEach { ip ->
+        val mNotificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        ips.forEachIndexed { index, ip ->
+            builder.setProgress(ips.size, index, false)
+            mNotificationManager.notify(notificationId, builder.build())
+
             val portsOpen = mutableListOf<Int>()
             ports.forEach { port ->
                 // create a routine to do a tcp connect scan and if it works add the applicable
