@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,6 +55,9 @@ class SettingsFragment : Fragment() {
                     .collection("settings")
                     .document(uuid).set(userMap)
 
+                Util.popUp(appContext, "API Key Set!", Toast.LENGTH_SHORT)
+            } else {
+                Util.popUp(appContext, "Please enter an API key!!", Toast.LENGTH_LONG)
             }
 
         }
