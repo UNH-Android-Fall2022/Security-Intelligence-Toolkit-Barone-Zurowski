@@ -47,5 +47,6 @@ object Util {
     fun String.isCIDR(): Boolean =
         this.matches(Regex("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\/(\\d{1,2})"))
 
-
+    fun String.isIPv4(): Boolean =
+        this.matches(Regex("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})"))
 }

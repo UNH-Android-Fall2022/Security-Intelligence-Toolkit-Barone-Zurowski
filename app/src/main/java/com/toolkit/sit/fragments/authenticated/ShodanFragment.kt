@@ -19,6 +19,7 @@ import com.toolkit.sit.models.NetworkScanModel
 import com.toolkit.sit.shodan.ShodanAPI
 import com.toolkit.sit.shodan.ShodanRetrofitClient
 import com.toolkit.sit.util.Util
+import com.toolkit.sit.util.Util.isIPv4
 import com.toolkit.sit.util.Util.setShodanKey
 import kotlinx.coroutines.*
 
@@ -208,51 +209,64 @@ class ShodanFragment : Fragment() {
         }
     }
     private fun searchIP(ip: String) {
-        GlobalScope.launch {
-            val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
+        if(ip.isIPv4()) {
+            GlobalScope.launch {
+                val shodanAPI: ShodanAPI = ShodanRetrofitClient.getInstance()
 
-            try {
-                withContext(Dispatchers.Main) {
-                    Util.popUp(appContext, "Started Shodan Query!", Toast.LENGTH_LONG)
+                try {
+                    withContext(Dispatchers.Main) {
+                        Util.popUp(appContext, "Started Shodan Query!", Toast.LENGTH_LONG)
+                    }
+
+                    val data = shodanAPI.searchIP(ip)
+
+                    val openPortsMap: MutableMap<String, List<Int>> = HashMap()
+
+                    openPortsMap[ip] = data.ports as MutableList<Int>
+                    val info = "${data.city}, ${data.regionCode}, ${data.countryName}, ${data.org}"
+                    val model = NetworkScanModel(
+                        createdTime = Timestamp.now(),
+                        uid = FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                        scanType = "SHODAN_SEARCH_IP",
+                        results = mutableListOf(
+                            openPortsMap
+                        ),
+                        attemptedScan = info,
+                        isLocalScan = false,
+                        isNetworkScan = false
+                    )
+                    //
+                    val db = Firebase.firestore
+                    db.collection("scans").add(model)
+
+                    withContext(Dispatchers.Main) {
+                        Util.popUp(appContext, "Finished Shodan Query!", Toast.LENGTH_LONG)
+                    }
+
+                    Log.d(TAG, "Search Address: $model")
+                } catch (e: retrofit2.HttpException) {
+                    withContext(Dispatchers.Main) {
+                        Util.popUp(
+                            appContext,
+                            "ERROR: Your API Key is Invalid!!",
+                            Toast.LENGTH_LONG
+                        )
+                    }
+                    Log.d(TAG, "Invalid API Key")
+                } catch (e: java.net.SocketTimeoutException) {
+                    withContext(Dispatchers.Main) {
+                        Util.popUp(
+                            appContext,
+                            "Shodan Timeout Error. Potentially an Invalid API Key.",
+                            Toast.LENGTH_LONG
+                        )
+                    }
+                    Log.d(TAG, "Shodan Timeout Error. Potentially an Invalid API Key.")
                 }
-
-                val data = shodanAPI.searchIP(ip)
-
-                val openPortsMap: MutableMap<String, List<Int>> = HashMap()
-
-                openPortsMap[ip] = data.ports as MutableList<Int>
-                val info = "${data.city}, ${data.regionCode}, ${data.countryName}, ${data.org}"
-                val model = NetworkScanModel(
-                    createdTime = Timestamp.now(),
-                    uid = FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                    scanType = "SHODAN_SEARCH_IP",
-                    results = mutableListOf(
-                        openPortsMap
-                    ),
-                    attemptedScan = info,
-                    isLocalScan = false,
-                    isNetworkScan = false
-                )
-                //
-                val db = Firebase.firestore
-                db.collection("scans").add(model)
-
-                withContext(Dispatchers.Main) {
-                    Util.popUp(appContext, "Finished Shodan Query!", Toast.LENGTH_LONG)
-                }
-
-                Log.d(TAG, "Search Address: $model")
-            } catch (e: retrofit2.HttpException) {
-                withContext(Dispatchers.Main) {
-                    Util.popUp(appContext, "ERROR: Your API Key is Invalid!!", Toast.LENGTH_LONG)
-                }
-                Log.d(TAG, "Invalid API Key")
-            } catch(e: java.net.SocketTimeoutException) {
-                withContext(Dispatchers.Main) {
-                    Util.popUp(appContext, "Shodan Timeout Error. Potentially an Invalid API Key.", Toast.LENGTH_LONG)
-                }
-                Log.d(TAG, "Shodan Timeout Error. Potentially an Invalid API Key.")
             }
+        } else {
+            Util.popUp(appContext, "Please Enter Valid IPv4 address", Toast.LENGTH_SHORT)
+            Log.d(TAG, "Please Enter Valid IPv4 address")
         }
     }
     private fun getPublicIP(): String {
