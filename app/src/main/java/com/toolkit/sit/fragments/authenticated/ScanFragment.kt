@@ -115,29 +115,43 @@ class ScanFragment : Fragment() {
             mNotificationManager.notify(notificationId, builder.build())
 
             val openAddresses = scanner.remoteScan(subnet, timeout, appContext, builder, notificationId) // this is where scan is done
-            Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
 
-            val db = Firebase.firestore
-            // add to the database using the network Model.
-            db.collection("scans").add(
-                NetworkScanModel(
-                    createdTime = Timestamp.now(),
-                    results = openAddresses,
-                    isLocalScan = isLocalScan,
-                    attemptedScan = subnet,
-                    uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+            val isAuth = FirebaseAuth.getInstance().currentUser
+            // Check if user logged out during scan before saving...
+            if(isAuth != null) {
+                Log.d(TAG, FirebaseAuth.getInstance().currentUser?.email.toString())
+
+                val db = Firebase.firestore
+                // add to the database using the network Model.
+                db.collection("scans").add(
+                    NetworkScanModel(
+                        createdTime = Timestamp.now(),
+                        results = openAddresses,
+                        isLocalScan = isLocalScan,
+                        attemptedScan = subnet,
+                        uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                    )
                 )
-            )
 
-            builder.setContentTitle("Network Scan - Complete")
+                builder.setContentTitle("Network Scan - Complete")
                     .setContentText("Open SIT to view your scan results for " + subnet)
-                    .setStyle(NotificationCompat.BigTextStyle()
-                        .bigText("Open SIT to view your scan results for " + subnet))
+                    .setStyle(
+                        NotificationCompat.BigTextStyle()
+                            .bigText("Open SIT to view your scan results for " + subnet)
+                    )
                     .setAutoCancel(true)
                     .setProgress(100, 100, false)
-            mNotificationManager.notify(notificationId, builder.build())
+                mNotificationManager.notify(notificationId, builder.build())
 
-            Log.d(TAG, "Open hosts $openAddresses")
+                Log.d(TAG, "Open hosts $openAddresses")
+            } else {
+                builder.setContentTitle("Network Scan - Cancelled")
+                    .setContentText("Scan for " + subnet + "cancelled, user logged out of SIT.")
+                    .setStyle(NotificationCompat.BigTextStyle()
+                            .bigText("Scan for " + subnet + "cancelled, user logged out of SIT."))
+                    .setAutoCancel(true)
+                mNotificationManager.notify(notificationId, builder.build())
+            }
         }
     }
 

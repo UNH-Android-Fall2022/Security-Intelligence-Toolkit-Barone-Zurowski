@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.toolkit.sit.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -38,6 +39,14 @@ class NetScanner {
         val mNotificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         ips.forEachIndexed { index, ip ->
+            val isAuth = FirebaseAuth.getInstance().currentUser
+            // Check if user logged out during scan before saving...
+            if(isAuth == null) {
+                withContext(Dispatchers.Main) {
+                    Util.popUp(appContext, "Network Scan on $cidr Cancelled!!", Toast.LENGTH_SHORT)
+                }
+                return@forEachIndexed
+            }
             builder.setProgress(ips.size, index, false)
             mNotificationManager.notify(notificationId, builder.build())
 
