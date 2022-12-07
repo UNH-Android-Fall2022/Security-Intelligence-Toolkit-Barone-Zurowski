@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
@@ -41,6 +42,7 @@ class ScanFragment : Fragment() {
     private lateinit var remoteScanButton: Button
     private lateinit var buttonStartLocalScan: Button
     private lateinit var editTextScanField: EditText
+    private lateinit var textLocalScan: TextView
     private lateinit var appContext: Context
     private var TAG = "SCAN_FRAGMENT"
 
@@ -56,6 +58,7 @@ class ScanFragment : Fragment() {
         remoteScanButton = view.findViewById(R.id.buttonStartRemoteScan)
         editTextScanField = view.findViewById(R.id.editTextRemoteSubnet)
         buttonStartLocalScan = view.findViewById(R.id.buttonStartLocalScan)
+        textLocalScan = view.findViewById(R.id.textLocalScan)
         appContext = view.context.applicationContext
         return view
     }
@@ -87,12 +90,27 @@ class ScanFragment : Fragment() {
         // get the local CIDR notation so the user knows what the local scan will be
         buttonStartLocalScan.text = "Start Local Scan (${getLocalCIDR()})"
 
+        if(getLocalCIDR() == "") {
+            textLocalScan.visibility = View.INVISIBLE
+            buttonStartLocalScan.visibility = View.INVISIBLE
+        } else {
+            textLocalScan.visibility = View.VISIBLE
+            buttonStartLocalScan.visibility = View.VISIBLE
+        }
+
 
         // automatically do local scan if clicked
         buttonStartLocalScan.setOnClickListener {
             (activity as SITActivity).hideSoftKeyboard()
             val localCIDR = getLocalCIDR()
-            runScanAndWrite(scanner, localCIDR, true, 20)
+
+            if(localCIDR == "") {
+                Util.popUp(appContext,"Please connect to WiFi to use this feature!!", Toast.LENGTH_SHORT)
+                textLocalScan.visibility = View.INVISIBLE
+                buttonStartLocalScan.visibility = View.INVISIBLE
+            } else {
+                runScanAndWrite(scanner, localCIDR, true, 20)
+            }
         }
     }
 
@@ -148,7 +166,7 @@ class ScanFragment : Fragment() {
                 builder.setContentTitle("Network Scan - Cancelled")
                     .setContentText("Scan for " + subnet + "cancelled, user logged out of SIT.")
                     .setStyle(NotificationCompat.BigTextStyle()
-                            .bigText("Scan for " + subnet + "cancelled, user logged out of SIT."))
+                            .bigText("Scan for " + subnet + " cancelled, user logged out of SIT."))
                     .setAutoCancel(true)
                 mNotificationManager.notify(notificationId, builder.build())
             }
