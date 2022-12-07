@@ -21,7 +21,8 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name_short"
-            android:theme="@style/AppFullScreenTheme">
+            android:theme="@style/AppFullScreenTheme"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
