@@ -190,23 +190,26 @@ class ShodanFragment : Fragment() {
                 val data = shodanAPI.search(filter)
 
                 if(data.matches.isNotEmpty()) {
-                    val match = data.matches.last()
-                    var data = "Title: ${match.title}"
+                    var info = ""
+                    data.matches.forEach {
+                        val match = it
+                        info += "Title: ${match.title}"
 
-                    if(match.query?.isNotEmpty() == true) {
-                        data += "\nQuery Found: ${match.query}"
-                    }
-                    if (match.description?.isNotEmpty() == true) {
-                        data += "\nDescription: ${match.description}"
-                    }
+                        if(match.query?.isNotEmpty() == true) {
+                            info += "\nQuery Found: ${match.query}"
+                        }
+                        if (match.description?.isNotEmpty() == true) {
+                            info += "\nDescription: ${match.description}\n\n"
+                        }
 
+                    }
 
                     val model = NetworkScanModel(
                         createdTime = Timestamp.now(),
                         uid = FirebaseAuth.getInstance().currentUser?.uid.toString(),
                         scanType = "SHODAN_FILTER_SEARCH",
                         results = mutableListOf(
-                            hashMapOf(data to listOf())
+                            hashMapOf(info to listOf())
                         ),
                         attemptedScan = filter,
                         isLocalScan = false,
