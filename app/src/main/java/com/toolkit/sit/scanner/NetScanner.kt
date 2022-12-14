@@ -34,7 +34,7 @@ class NetScanner {
         val openAddresses = mutableListOf<MutableMap<String, List<Int>>>()
 
         // current ports that it will attempt to connec tto.
-        val ports = listOf(80, 443)
+        val ports = listOf(20,21,22,23,24,25,26,30,32,33,37,42,43,49,53,70,79,80,443,3389,8080,8443) //Common ports
 
         val mNotificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
